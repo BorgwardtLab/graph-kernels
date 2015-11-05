@@ -35,11 +35,9 @@ using namespace std;
 // =========================================================== //
 // Measure running time
 double measureTime() {
-  struct rusage t;
   struct timeval tv;
-  getrusage(RUSAGE_SELF, &t);
-  tv = t.ru_utime;
-  return tv.tv_sec + (double)tv.tv_usec * 1e-6;
+  gettimeofday(&tv, NULL);
+  return tv.tv_sec + (double)tv.tv_usec*1e-6;
 }
 // compute simple statistics of graphs
 void computeStatistics(vector<igraph_t>& g) {
@@ -71,12 +69,11 @@ void computeStatistics(vector<igraph_t>& g) {
   vmean = vmean / (double)n;
   emean = emean / (double)n;
 
-  // cout << ">> Statistics:" << endl;
-  cout << "   Number of graphs: " << n << endl;
-  cout << "   The average number of vertices: " << vmean << endl;
-  cout << "   The maximum number of vertices: " << vmax << endl;
-  cout << "   The average number of edges:    " << emean << endl;
-  cout << "   The maximum number of edges:    " << emax << endl;
+  cout << "  Number of graphs: " << n << endl;
+  cout << "  The average number of vertices: " << vmean << endl;
+  cout << "  The maximum number of vertices: " << vmax << endl;
+  cout << "  The average number of edges:    " << emean << endl;
+  cout << "  The maximum number of edges:    " << emax << endl;
 }
 // get kernel name
 string getKernelName(string& kernel_name) {
@@ -95,9 +92,9 @@ string getKernelName(string& kernel_name) {
 }
 // print kernel name and parameters
 void printKernel(string& kernel_name, vector<double>& par) {
-  cout << ">> Information:" << endl;
-  cout << "   Kernel:    " << getKernelName(kernel_name) << " kernel" << endl;
-  cout << "   Parameter: ";
+  cout << "> Information:" << endl;
+  cout << "  Kernel:    " << getKernelName(kernel_name) << " kernel" << endl;
+  cout << "  Parameter: ";
   if (kernelTable(kernel_name) == 1 || kernelTable(kernel_name) == 2 || kernelTable(kernel_name) == 3) {
     cout << "NONE" << endl;
   } else if (kernelTable(kernel_name) == 4 || kernelTable(kernel_name) == 8) {
@@ -177,7 +174,7 @@ int main(int argc, char *argv[]) {
   }
 
   // read a graph file
-  cout << ">> Reading files ... ";
+  cout << "> Reading files ... ";
   ifstream ifs(glist);
   char str[BUF], pstr[BUF];
   if (ifs.fail()) {
@@ -209,15 +206,15 @@ int main(int argc, char *argv[]) {
 
   // compute the kernel value
   MatrixXd K(g.size(), g.size());
-  cout << ">> Computing the kernel matrix ... " << flush;
+  cout << "> Computing the kernel matrix ... " << flush;
   double t1 = measureTime();
   graphKernelMatrix(g, par, kernel_name, K);
   double t2 = measureTime();
   cout << "end" << endl;
-  cout << "   Runtime for the kernel matrix computation: " << t2 - t1 << " (sec.)" << endl;
+  cout << "  Runtime for the kernel matrix computation: " << t2 - t1 << " (sec.)" << endl;
 
   // write the kernel to a file
-  cout << ">> Writing the kernel matrix to \"" << output << "\" ... ";
+  cout << "> Writing the kernel matrix to \"" << output << "\" ... ";
   ofstream ofs(output);
   for (int i = 0; i < (int)g.size(); i++) {
     for (int j = 0; j < (int)g.size(); j++) {
