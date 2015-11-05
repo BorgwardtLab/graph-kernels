@@ -77,11 +77,11 @@ Kernels                                            | Abbrev. | Parameter
 -------------------------------------------------- | ------- | ---------
 Linear kernel between vertex histograms            |       V | None
 Linear kernel between edge histograms              |       E | None
-Linear kernel between vergex-edge histograms       |      VE | None
+Linear kernel between vertex-edge histograms       |      VE | None
 Linear kernel combination (V + &#955;VE)           |       H | &#955;
 Gaussian RBF kernel between vertex histograms      |      VG | &#963;
 Gaussian RBF kernel between edge histograms        |      EG | &#963;
-Gaussian RBF kernel between vergex-edge histograms |     VEG | &#963;
+Gaussian RBF kernel between vertex-edge histograms |     VEG | &#963;
 Geometric random walk kernel                       |      GR | &#955;
 Exponential random walk kernel                     |      ER | &#946;
 k-step random walk kernel                          |      kR | &#955;0, &#955;1, ..., &#955;k
