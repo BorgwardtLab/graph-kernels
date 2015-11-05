@@ -1,5 +1,28 @@
-// ./gkernel -i /Users/mahito/sync/data/graph/graphml/mutag.list -g /Users/mahito/sync/data/graph/graphml/mutag/ -k WL -p 5 -o output
-// ./gkernel -i /home/mahito/sync/data/graph/graphml/mutag.list -g /home/mahito/sync/data/graph/graphml/mutag/ -k WL -p 5 -o output
+/*
+Graph kernel implementation
+Copyright (C) 2015 Mahito Sugiyama
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+Contact:
+Mahito Sugiyama
+ISIR, Osaka University,
+8-1, Mihogaoka, Ibaraki-shi, Osaka, 567-0047, Japan
+E-mail: mahito@ar.sanken.osaka-u.ac.jp
+*/
+
 #include "graphKernels.h"
 #include <unistd.h>
 
