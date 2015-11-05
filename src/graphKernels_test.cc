@@ -79,22 +79,22 @@ void computeStatistics(vector<igraph_t>& g) {
   cout << "   The maximum number of edges:    " << emax << endl;
 }
 // get kernel name
-string getKernelName(const char* kernel_name) {
-  if (strcmp(kernel_name, "E")   == 0) return "edge label histogram";
-  else if (strcmp(kernel_name, "V")   == 0) return "vertex label histogram";
-  else if (strcmp(kernel_name, "VE")  == 0) return "vertex-edge label histogram";
-  else if (strcmp(kernel_name, "H")   == 0) return "vertex-vertex-edge label histogram";
-  else if (strcmp(kernel_name, "EG")  == 0) return "vertex label histogram (Gaussian)";
-  else if (strcmp(kernel_name, "VG")  == 0) return "vertex-edge label histogram (Gaussian)";
-  else if (strcmp(kernel_name, "VEG") == 0) return "vertex-vertex-edge label histogram (Gaussian)";
-  else if (strcmp(kernel_name, "GR")  == 0) return "geometric random walk";
-  else if (strcmp(kernel_name, "ER")  == 0) return "exponential random walk";
-  else if (strcmp(kernel_name, "kR")  == 0) return "k-step random walk";
-  else if (strcmp(kernel_name, "WL")  == 0) return "Weisfeiler-Lehman";
+string getKernelName(string& kernel_name) {
+       if (kernel_name.compare("E")   == 0) return "edge label histogram";
+  else if (kernel_name.compare("V")   == 0) return "vertex label histogram";
+  else if (kernel_name.compare("VE")  == 0) return "vertex-edge label histogram";
+  else if (kernel_name.compare("H")   == 0) return "vertex-vertex-edge label histogram";
+  else if (kernel_name.compare("EG")  == 0) return "vertex label histogram (Gaussian)";
+  else if (kernel_name.compare("VG")  == 0) return "vertex-edge label histogram (Gaussian)";
+  else if (kernel_name.compare("VEG") == 0) return "vertex-vertex-edge label histogram (Gaussian)";
+  else if (kernel_name.compare("GR")  == 0) return "geometric random walk";
+  else if (kernel_name.compare("ER")  == 0) return "exponential random walk";
+  else if (kernel_name.compare("kR")  == 0) return "k-step random walk";
+  else if (kernel_name.compare("WL")  == 0) return "Weisfeiler-Lehman";
   else return "edge label histogram";
 }
 // print kernel name and parameters
-void printKernel(const char* kernel_name, vector<double>& par) {
+void printKernel(string& kernel_name, vector<double>& par) {
   cout << ">> Information:" << endl;
   cout << "   Kernel:    " << getKernelName(kernel_name) << " kernel" << endl;
   cout << "   Parameter: ";
@@ -161,9 +161,8 @@ int main(int argc, char *argv[]) {
   vector<double> par;
   vector<igraph_t> g;
   char *val, *cpar = NULL;
-  const char *glist, *gpath, *kernel_name, *output;
-  const char *kernel_default = "edge";
-  kernel_name = kernel_default;
+  const char *glist, *gpath, *output;
+  string kernel_name = "E";
 
   // get arguments
   char opt;
@@ -172,7 +171,7 @@ int main(int argc, char *argv[]) {
     case 'i': glist = optarg; break;
     case 'g': gpath = optarg; break;
     case 'p': cpar = optarg; break;
-    case 'k': kernel_name = optarg; break;
+    case 'k': kernel_name.assign(optarg); break;
     case 'o': output = optarg; break;
     }
   }

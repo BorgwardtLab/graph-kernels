@@ -46,10 +46,10 @@ using namespace std;
 using namespace Eigen;
 
 // MAIN FUNCTION
-void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par, const char* kernel_name, MatrixXd& K);
+void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par, string& kernel_name, MatrixXd& K);
 // functions used in the main function
-int kernelTable(const char* kernel_name);
-double computeKernelValue(MatrixXi& e1, MatrixXi& e2, vector<int>& v1_label, vector<int>& v2_label, vector<double>& par, const char* kernel_name);
+int kernelTable(string& kernel_name);
+double computeKernelValue(MatrixXi& e1, MatrixXi& e2, vector<int>& v1_label, vector<int>& v2_label, vector<double>& par, string& kernel_name);
 // igraph to Eigen
 const char *getVlabel(igraph_t g, igraph_vector_t vtypes, igraph_strvector_t vnames);
 const char *getElabel(igraph_t g, igraph_vector_t etypes, igraph_strvector_t enames);
@@ -73,7 +73,7 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<int> >& V_label, vector<i
 // ======================================================= //
 // ==================== MAIN FUNCTION ==================== //
 // ======================================================= //
-void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par, const char* kernel_name, MatrixXd& K) {
+void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par, string& kernel_name, MatrixXd& K) {
   // use attributes
   igraph_i_set_attribute_table(&igraph_cattribute_table);
 
@@ -108,22 +108,22 @@ void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par, const char* ker
 // ==================== Functions used in MAIN ==================== //
 // ================================================================ //
 // A hash table for kernel names
-int kernelTable(const char* kernel_name) {
-       if (strcmp(kernel_name, "E")   == 0) return 1;
-  else if (strcmp(kernel_name, "V")   == 0) return 2;
-  else if (strcmp(kernel_name, "VE")  == 0) return 3;
-  else if (strcmp(kernel_name, "H")   == 0) return 4;
-  else if (strcmp(kernel_name, "EG")  == 0) return 5;
-  else if (strcmp(kernel_name, "VG")  == 0) return 6;
-  else if (strcmp(kernel_name, "VEG") == 0) return 7;
-  else if (strcmp(kernel_name, "GR")  == 0) return 8;
-  else if (strcmp(kernel_name, "ER")  == 0) return 9;
-  else if (strcmp(kernel_name, "kR")  == 0) return 10;
-  else if (strcmp(kernel_name, "WL")  == 0) return 11;
+int kernelTable(string& kernel_name) {
+       if (kernel_name.compare("E") == 0) return 1;
+  else if (kernel_name.compare("V")   == 0) return 2;
+  else if (kernel_name.compare("VE")  == 0) return 3;
+  else if (kernel_name.compare("H")   == 0) return 4;
+  else if (kernel_name.compare("EG")  == 0) return 5;
+  else if (kernel_name.compare("VG")  == 0) return 6;
+  else if (kernel_name.compare("VEG") == 0) return 7;
+  else if (kernel_name.compare("GR")  == 0) return 8;
+  else if (kernel_name.compare("ER")  == 0) return 9;
+  else if (kernel_name.compare("kR")  == 0) return 10;
+  else if (kernel_name.compare("WL")  == 0) return 11;
   else return 1;
 }
 // compute a kernel value of a pair of graphs
-double computeKernelValue(MatrixXi& e1, MatrixXi& e2, vector<int>& v1_label, vector<int>& v2_label, vector<double>& par, const char* kernel_name) {
+double computeKernelValue(MatrixXi& e1, MatrixXi& e2, vector<int>& v1_label, vector<int>& v2_label, vector<double>& par, string& kernel_name) {
   double K;
   switch (kernelTable(kernel_name)) {
   case 1: // edge histogram kernel
