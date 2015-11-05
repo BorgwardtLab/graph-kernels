@@ -1,10 +1,10 @@
 # Graph Kernels
-C++ implementation of graph kernels including:
+Fast C++ implementation of graph kernels including:
 * simple kernels between label histograms,
 * random walk kernels, and
 * Weisfeiler-Lehman graph kernel (kwon to be the state-of-the-art).
 
-Please see the following papers for more detail:
+Please see the following paper for more detail:
 * Sugiyama, M., Borgwardt, K. M.: **Halting in Random Walk Kernels,**, *Advances in Neural Information Processing Systems (NIPS 2015)*, 2015
 
 ## Usage
@@ -14,7 +14,8 @@ To compile it, the [Eigen](http://eigen.tuxfamily.org) and [igraph](http://igrap
 
 The main function is "graphKernelMatrix", defined as:
 ```
-void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par, string& kernel_name, MatrixXd& K);
+void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par,
+                       string& kernel_name, MatrixXd& K);
 ```
 * `g`: a vector of input graphs
 * `par`: a vector of parameters
@@ -22,7 +23,7 @@ void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par, string& kernel_
 * `K`: the full kernel matrix will be returned here
 
 ### From terminal
-To try the code, we also provide the test code "graphKernels_test.h", which includes input and output interface for graph files.
+To try the code, we also provide the test code "graphKernels_test.h", which includes input and output interface for graph files, and a graph database "mutag".
 
 For example:
 ```
@@ -59,7 +60,7 @@ In compilation, please edit paths in the "Makefile" according to the location of
 #### Argument list
 
   `-i <input_file_list>` : A file describing graph file names  
-  `-i <input_file_path>` : A path to the directory of graphfiles  
+  `-i <input_file_path>` : A path to the directory of graph files (the GraphML format is supported)  
   `-k <kernel_name>` : The abbreviated kernel name (see the list below)  
   `-p <parameter>` : Parameter(s) (if there are more than two, they should be comma-separated)  
   `-o <output_file>` : Output file of the full kernel matrix
