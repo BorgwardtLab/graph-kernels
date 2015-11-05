@@ -5,7 +5,7 @@ Fast C++ implementation of graph kernels including:
 * Weisfeiler-Lehman graph kernel (known to be the state-of-the-art).
 
 Please see the following paper for more detail:
-* Sugiyama, M., Borgwardt, K. M.: **Halting in Random Walk Kernels,**, *Advances in Neural Information Processing Systems (NIPS 2015)*, 2015
+* Sugiyama, M., Borgwardt, K. M.: **Halting in Random Walk Kernels**, *Advances in Neural Information Processing Systems (NIPS 2015)*, 2015
 
 ## Usage
 ### In your program
