@@ -1,10 +1,10 @@
 # Graph Kernels
-Fast C++ implementation of graph kernels including:
+A fast C++ implementation of graph kernels including:
 * simple kernels between vertex and/or edge label histograms,
-* random walk kernels, and
-* Weisfeiler-Lehman graph kernel (known to be the state-of-the-art).
+* random walk kernels (popular baselines), and
+* Weisfeiler-Lehman graph kernel (state-of-the-art).
 
-Please see the following paper for more detail:
+Please see the following paper for more details:
 * Sugiyama, M., Borgwardt, K. M.: **Halting in Random Walk Kernels**, *Advances in Neural Information Processing Systems (NIPS 2015)*, 2015
 
 ## Usage
@@ -24,12 +24,12 @@ void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par,
 * `K`: the full kernel matrix will be returned here
 
 ### In terminal
-To try the code, we also provide a graph benchmark dataset "mutag" and the test code "graphKernels_test.cc", which includes input and output interface for graph files.
+To try the code, we also provide a graph benchmark dataset "mutag" and a test code "graphKernels_test.cc", which includes input and output interface for graph files.
 
 For example:
 ```
 $ make
-$ ./gkernel -i graphs/mutag.list -g graphs/mutag/ -k kR -p 1,2,1 -o mutag.kernel
+$ ./gkernel -k kR -p 1,2,1 -i graphs/mutag.list -g graphs/mutag/ -o mutag_kR.kernel
 > Reading files ... end
 > Information:
   Kernel:    k-step random walk kernel
@@ -41,8 +41,8 @@ $ ./gkernel -i graphs/mutag.list -g graphs/mutag/ -k kR -p 1,2,1 -o mutag.kernel
   The maximum number of edges:    33
 > Computing the kernel matrix ... end
   Runtime for the kernel matrix computation: 2.9501 (sec.)
-> Writing the kernel matrix to "mutag.kernel" ... end
-$ ./gkernel -i graphs/mutag.list -g graphs/mutag/ -k WL -p 5 -o mutag.kernel
+> Writing the kernel matrix to "mutag_kR.kernel" ... end
+$ ./gkernel -k WL -p 5 -i graphs/mutag.list -g graphs/mutag/ -o mutag_WL.kernel
 > Reading files ... end
 > Information:
   Kernel:    Weisfeiler-Lehman kernel
@@ -54,17 +54,17 @@ $ ./gkernel -i graphs/mutag.list -g graphs/mutag/ -k WL -p 5 -o mutag.kernel
   The maximum number of edges:    33
 > Computing the kernel matrix ... end
   Runtime for the kernel matrix computation: 0.00567007 (sec.)
-> Writing the kernel matrix to "mutag.kernel" ... end
+> Writing the kernel matrix to "mutag_WL.kernel" ... end
 ```
 To compile the program, please edit paths in the "Makefile" according to the location of Eigen and igraph libraries in your environment.
 
 #### Command-line arguments
 
-  `-i <input_file_list>` : A file describing the list of graph file names  
-  `-i <input_file_path>` : A path to the directory of graph files (the GraphML format is supported)  
-  `-k <kernel_name>` : The abbreviated kernel name (see the list below)  
+  `-k <kernel_name>` : An abbreviated kernel name (see the list below)  
   `-p <parameter>` : Parameter(s) in a kernel (if there are more than two, they should be comma-separated)  
-  `-o <output_file>` : Output file of the full kernel matrix
+  `-i <input_file_list>` : A file describing the list of graph file names  
+  `-g <input_file_path>` : A path to the directory of graph files (the GraphML format is supported)  
+  `-o <output_file>` : An output file of the full kernel matrix
 
 
 

@@ -84,6 +84,7 @@ void graphKernelMatrix(vector<igraph_t>& g, vector<double>& par, string& kernel_
   vector<int> V_count(n);
   vector<int> E_count(n);
   vector<int> D_max(n);
+  K.resize(n, n);
 
   // from igraph to Eigen
   for (int i = 0; i < n; i++) {
