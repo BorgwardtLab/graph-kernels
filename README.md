@@ -7,6 +7,8 @@ A fast C++ implementation of graph kernels including:
 Please see the following paper for more details:
 * Sugiyama, M., Borgwardt, K. M.: **Halting in Random Walk Kernels**, *Advances in Neural Information Processing Systems (NIPS 2015)*, 2015
 
+Other implementations and graph benchmark datasets are available [here](https://www.bsse.ethz.ch/mlcb/research/machine-learning/graph-kernels.html):
+
 ## Usage
 ### In your program
 You can compute the full kernel matrix by calling the function `graphKernelMatrix`.
