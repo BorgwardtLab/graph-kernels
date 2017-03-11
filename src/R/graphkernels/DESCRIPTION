@@ -1,0 +1,12 @@
+Package: graphkernels
+Type: Package
+Title: Graph Kernels
+Version: 1.0
+Date: 2017-03-10
+Author: Mahito Sugiyama
+Maintainer: Mahito Sugiyama <mahito@ar.sanken.osaka-u.ac.jp>
+Description: graphkernels is a library for computation of various graph kernels.
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.12.9), RcppEigen (>= 0.3.2.9.0)
+Depends: igraph (>= 1.0.1)
+LinkingTo: Rcpp, RcppEigen

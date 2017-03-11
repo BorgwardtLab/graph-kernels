@@ -2,7 +2,7 @@
 A fast C++ implementation of graph kernels including:
 * simple kernels between vertex and/or edge label histograms,
 * random walk kernels (popular baselines), and
-* Weisfeiler-Lehman graph kernel (state-of-the-art).
+* the Weisfeiler-Lehman graph kernel (state-of-the-art).
 
 Please see the following paper for more details:
 * Sugiyama, M., Borgwardt, K. M.: **Halting in Random Walk Kernels**, *Advances in Neural Information Processing Systems (NIPS 2015)*, 2015 [[PDF]](https://papers.nips.cc/paper/5688-halting-in-random-walk-kernels.pdf)
@@ -30,8 +30,9 @@ To try the code, we also provide a graph benchmark dataset "mutag" and a test co
 
 For example:
 ```
+$ cd src/cc
 $ make
-$ ./gkernel -k kR -p 1,2,1 -i graphs/mutag.list -g graphs/mutag/ -o mutag_kR.kernel
+$ ./gkernel -k kR -p 1,2,1 -i ../../data/mutag.list -g ../../data/mutag/ -o mutag_kR.kernel
 > Reading files ... end
 > Information:
   Kernel:    k-step random walk kernel
@@ -44,7 +45,7 @@ $ ./gkernel -k kR -p 1,2,1 -i graphs/mutag.list -g graphs/mutag/ -o mutag_kR.ker
 > Computing the kernel matrix ... end
   Runtime for the kernel matrix computation: 2.9501 (sec.)
 > Writing the kernel matrix to "mutag_kR.kernel" ... end
-$ ./gkernel -k WL -p 5 -i graphs/mutag.list -g graphs/mutag/ -o mutag_WL.kernel
+$ ./gkernel -k WL -p 5 -i ../../data/mutag.list -g ../../data/mutag/ -o mutag_WL.kernel
 > Reading files ... end
 > Information:
   Kernel:    Weisfeiler-Lehman kernel
