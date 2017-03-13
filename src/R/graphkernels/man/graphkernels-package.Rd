@@ -13,7 +13,7 @@
   \itemize{
     \item simple kernels between vertex and/or edge label histograms,
     \item random walk kernels (popular baselines), and
-    \item Weisfeiler-Lehman graph kernel (state-of-the-art).
+    \item the Weisfeiler-Lehman graph kernel (state-of-the-art).
   }
 }
 \author{
