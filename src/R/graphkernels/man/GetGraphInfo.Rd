@@ -1,10 +1,10 @@
 \name{GetGraphInfo}
 \alias{GetGraphInfo}
 \title{
-  Nesessarry information of graphs for kernel computation
+  Necessary information of graphs for kernel computation
 }
 \description{
-  This function extracts nesessarry information of graphs for kernel
+  This function extracts necessary information of graphs for kernel
   computation
 }
 \usage{
