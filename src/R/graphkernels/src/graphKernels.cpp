@@ -1,5 +1,4 @@
 #include <RcppEigen.h>
-#include <Rcpp.h>
 #define Int int32_t
 
 // [[Rcpp::plugins(cpp11)]]

@@ -31,7 +31,7 @@ CalculateKStepRandomWalkKernel(G, par)
 }
 \examples{
 data(mutag)
-K <- CalculateKStepRandomWalkKernel(mutag, rep(1, 3))
+K <- CalculateKStepRandomWalkKernel(mutag, rep(1, 2))
 }
 \keyword{ graph kernel }
 \keyword{ k-step walk kernel }

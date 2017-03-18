@@ -6,7 +6,7 @@
   Graph Kernels
 }
 \description{
-  \code{graphkernels} is a library for computation of various graph kernels.
+  A fast C++ implementation of various graph kernels.
 }
 \details{
   This library provides a fast C++ implementation of various graph kernels including:

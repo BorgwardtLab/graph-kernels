@@ -32,7 +32,7 @@ CalculateExponentialRandomWalkKernel(G, par)
 }
 \examples{
 data(mutag)
-K <- CalculateExponentialRandomWalkKernel(mutag[1:10], .1)
+K <- CalculateExponentialRandomWalkKernel(mutag[1:5], .1)
 }
 \keyword{ graph kernel }
 \keyword{ random walk kernel }

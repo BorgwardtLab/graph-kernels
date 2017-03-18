@@ -1,5 +1,4 @@
-useDynLib(graphkernels)
+useDynLib(graphkernels, .registration = TRUE)
 import(igraph)
-import(RcppEigen)
 importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
