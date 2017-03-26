@@ -22,8 +22,28 @@ Mahito Sugiyama
 Maintainer: Mahito Sugiyama \code{<mahito@ar.sanken.osaka-u.ac.jp>}
 }
 \references{
-  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk Kernels},
-  \emph{Advances in Neural Information Processing Systems (NIPS 2015)}, 2015.
+  Debnath, A. K., Lopez de Compadre, R. L., Debnath, G., Shusterman,
+  A. J., Hansch, C.: \strong{Structure-activity relationship of
+    mutagenic aromatic and heteroaromatic nitro compounds. correlation
+    with molecular orbital energies and hydrophobicity}, \emph{Journal
+    of Medicinal Chemistry}, 34(2), 786-797 (1991)
+  \url{http://pubs.acs.org/doi/abs/10.1021/jm00106a046}.
+
+  Gartner, T., Flach, P., Wrobel, S.: \strong{On graph kernels:
+    Hardness results and efficient alternatives}, \emph{Learning Theory
+    and Kernel Machines (LNCS 2777)}, 129-143 (2003)
+  \url{https://link.springer.com/chapter/10.1007/978-3-540-45167-9_11}.
+
+  Shervashidze, N. and Schweitzer, P. and van Leeuwen, E. J. and
+  Mehlhorn, K. and Borgwardt, K. M.: \strong{Weisfeiler-Lehman Graph
+    Kernels}, \emph{Journal of Machine Learning Research}, 12,
+  2359-2561 (2011)
+  \url{http://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
+
+  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk
+    Kernels}, \emph{Advances in Neural Information Processing Systems
+    (NIPS 2015)}, 28, 1630-1638 (2015)
+  \url{https://papers.nips.cc/paper/5688-halting-in-random-walk-kernels.pdf}.
 }
 \keyword{ graph kernel }
 \examples{

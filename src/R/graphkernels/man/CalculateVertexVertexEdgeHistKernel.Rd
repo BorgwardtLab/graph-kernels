@@ -25,8 +25,10 @@ CalculateVertexVertexEdgeHistKernel(G, par)
   a kernel matrix that is equivalent to \eqn{K_{VH} + \lambda K_{VEH}}{K_VH + lambda K_VEH}
 }
 \references{
-  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk Kernels},
-  \emph{Advances in Neural Information Processing Systems (NIPS 2015)}, 2015.
+  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk
+    Kernels}, \emph{Advances in Neural Information Processing Systems
+    (NIPS 2015)}, 28, 1630-1638 (2015)
+  \url{https://papers.nips.cc/paper/5688-halting-in-random-walk-kernels.pdf}.
 }
 \author{
   Mahito Sugiyama

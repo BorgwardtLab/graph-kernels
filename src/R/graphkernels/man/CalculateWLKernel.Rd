@@ -22,8 +22,11 @@ CalculateWLKernel(G, par)
   a kernel matrix of the Weisfeiler-Lehman subtree kernel \eqn{K_{WL}}{K_WL}
 }
 \references{
-  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk Kernels},
-  \emph{Advances in Neural Information Processing Systems (NIPS 2015)}, 2015.
+  Shervashidze, N. and Schweitzer, P. and van Leeuwen, E. J. and
+  Mehlhorn, K. and Borgwardt, K. M.: \strong{Weisfeiler-Lehman Graph
+    Kernels}, \emph{Journal of Machine Learning Research}, 12,
+  2359-2561 (2011)
+  \url{http://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
 }
 \author{
   Mahito Sugiyama

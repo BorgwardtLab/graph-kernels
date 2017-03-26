@@ -1,8 +1,8 @@
 Package: graphkernels
 Type: Package
 Title: Graph Kernels
-Version: 1.0
-Date: 2017-03-10
+Version: 1.1
+Date: 2017-03-27
 Author: Mahito Sugiyama
 Maintainer: Mahito Sugiyama <mahito@ar.sanken.osaka-u.ac.jp>
 Description: A fast C++ implementation of various graph kernels.

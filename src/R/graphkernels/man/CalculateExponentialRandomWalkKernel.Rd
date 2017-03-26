@@ -24,8 +24,10 @@ CalculateExponentialRandomWalkKernel(G, par)
   a kernel matrix of the exponential random walk kernel \eqn{K_{ER}}{K_ER}
 }
 \references{
-  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk Kernels},
-  \emph{Advances in Neural Information Processing Systems (NIPS 2015)}, 2015.
+  Gartner, T., Flach, P., Wrobel, S.: \strong{On graph kernels:
+    Hardness results and efficient alternatives}, \emph{Learning Theory
+    and Kernel Machines (LNCS 2777)}, 129-143 (2003)
+  \url{https://link.springer.com/chapter/10.1007/978-3-540-45167-9_11}.
 }
 \author{
   Mahito Sugiyama

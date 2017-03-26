@@ -22,8 +22,10 @@ CalculateVertexHistGaussKernel(G, par)
   a kernel matrix of the Gaussian RBF kernel \eqn{K_{VH,G}}{K_VH,G} between vertex label histograms
 }
 \references{
-  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk Kernels},
-  \emph{Advances in Neural Information Processing Systems (NIPS 2015)}, 2015.
+  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk
+    Kernels}, \emph{Advances in Neural Information Processing Systems
+    (NIPS 2015)}, 28, 1630-1638 (2015)
+  \url{https://papers.nips.cc/paper/5688-halting-in-random-walk-kernels.pdf}.
 }
 \author{
   Mahito Sugiyama

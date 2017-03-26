@@ -33,10 +33,6 @@ GetGraphInfo(g)
     the maximum degree
   }
 }
-\references{
-  Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk Kernels},
-  \emph{Advances in Neural Information Processing Systems (NIPS 2015)}, 2015.
-}
 \author{
   Mahito Sugiyama
 }
