@@ -22,10 +22,9 @@ CalculateWLKernel(G, par)
   a kernel matrix of the Weisfeiler-Lehman subtree kernel \eqn{K_{WL}}{K_WL}
 }
 \references{
-  Shervashidze, N. and Schweitzer, P. and van Leeuwen, E. J. and
-  Mehlhorn, K. and Borgwardt, K. M.: \strong{Weisfeiler-Lehman Graph
-    Kernels}, \emph{Journal of Machine Learning Research}, 12,
-  2359-2561 (2011)
+  Shervashidze, N., Schweitzer, P., van Leeuwen, E. J., Mehlhorn, K.,
+  Borgwardt, K. M.: \strong{Weisfeiler-Lehman Graph Kernels},
+  \emph{Journal of Machine Learning Research}, 12, 2359-2561 (2011)
   \url{http://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
 }
 \author{

@@ -6,15 +6,26 @@
   Graph Kernels
 }
 \description{
-  A fast C++ implementation of various graph kernels.
+  A fast C++ implementation for computing various graph kernels including (1) simple kernels between vertex and/or edge label histograms, (2) random walk kernels (popular baselines), and (3) the Weisfeiler-Lehman graph kernel (state-of-the-art).
 }
 \details{
-  This library provides a fast C++ implementation of various graph kernels including:
+  This library provides the following graph kernels:
   \itemize{
-    \item simple kernels between vertex and/or edge label histograms,
-    \item random walk kernels (popular baselines), and
-    \item the Weisfeiler-Lehman graph kernel (state-of-the-art).
+    \item the linear kernel between vertex label histograms
+    \item the linear kernel between edge label histograms
+    \item the linear kernel between vertex-edge label histograms
+    \item the linear kernel combination vertex label histograms and
+    vertex-edge label histograms
+    \item the Gaussian RBF kernel between vertex label histograms
+    \item the Gaussian RBF kernel between edge label histograms
+    \item the Gaussian RBF kernel between vertex-edge label histograms
+    \item the \eqn{k}{k}-step random walk kernel
+    \item the geometric random walk kernel
+    \item the exponential random walk kernel
+    \item the Weisfeiler-Lehman subtree kernel
   }
+  Given a list of \pkg{igraph} graphs, each function calculates the
+  corresponding kernel (Gram) matrix.
 }
 \author{
 Mahito Sugiyama
@@ -34,10 +45,9 @@ Maintainer: Mahito Sugiyama \code{<mahito@ar.sanken.osaka-u.ac.jp>}
     and Kernel Machines (LNCS 2777)}, 129-143 (2003)
   \url{https://link.springer.com/chapter/10.1007/978-3-540-45167-9_11}.
 
-  Shervashidze, N. and Schweitzer, P. and van Leeuwen, E. J. and
-  Mehlhorn, K. and Borgwardt, K. M.: \strong{Weisfeiler-Lehman Graph
-    Kernels}, \emph{Journal of Machine Learning Research}, 12,
-  2359-2561 (2011)
+  Shervashidze, N., Schweitzer, P., van Leeuwen, E. J., Mehlhorn, K.,
+  Borgwardt, K. M.: \strong{Weisfeiler-Lehman Graph Kernels},
+  \emph{Journal of Machine Learning Research}, 12, 2359-2561 (2011)
   \url{http://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
 
   Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk
