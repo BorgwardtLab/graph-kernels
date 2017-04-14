@@ -30,7 +30,7 @@
 \author{
 Mahito Sugiyama
 
-Maintainer: Mahito Sugiyama \code{<mahito@ar.sanken.osaka-u.ac.jp>}
+Maintainer: Mahito Sugiyama \code{<mahito@nii.ac.jp>}
 }
 \references{
   Debnath, A. K., Lopez de Compadre, R. L., Debnath, G., Shusterman,

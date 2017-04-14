@@ -1,10 +1,10 @@
 Package: graphkernels
 Type: Package
 Title: Graph Kernels
-Version: 1.1
-Date: 2017-03-28
+Version: 1.2
+Date: 2017-04-14
 Author: Mahito Sugiyama
-Maintainer: Mahito Sugiyama <mahito@ar.sanken.osaka-u.ac.jp>
+Maintainer: Mahito Sugiyama <mahito@nii.ac.jp>
 Description: A fast C++ implementation for computing various graph kernels including (1) simple kernels between vertex and/or edge label histograms, (2) random walk kernels (popular baselines), and (3) the Weisfeiler-Lehman graph kernel (state-of-the-art).
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.9)
