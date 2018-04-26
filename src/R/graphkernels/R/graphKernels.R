@@ -75,6 +75,51 @@ CalculateWLKernel <- function(G, par) {
   CalculateKernelCpp(graph.info.list, par, 11)
 }
 
+CalculateConnectedGraphletKernel <- function(G, par) {
+  if (par < 3) {
+    par <- 3
+    warning("k = 3 is used (k = 3, 4, or 5 is supported).")
+  }
+  if (par > 5) {
+    par <- 5
+    warning("k = 5 is used (k = 3, 4, or 5 is supported).")
+  }
+  al.list <- as.list(rep(NA, length(G)))
+  for (i in 1:length(G)) {
+    al.list[[i]] <- as_adj_list(G[[i]])
+  }
+  am.list <- as.list(rep(NA, length(G)))
+  for (i in 1:length(G)) {
+    am.list[[i]] <- as_adj(G[[i]])
+  }
+  CalculateGraphletKernelCpp(am.list, al.list, par, 1)
+}
+
+CalculateGraphletKernel <- function(G, par) {
+  if (par < 3) {
+    par <- 3
+    warning("k = 3 is used (k = 3 or 4 is supported).")
+  }
+  if (par > 4) {
+    par <- 4
+    warning("k = 4 is used (k = 3 or 4 is supported).")
+  }
+  al.list <- as.list(rep(NA, length(G)))
+  for (i in 1:length(G)) {
+    al.list[[i]] <- as_adj_list(G[[i]])
+  }
+  CalculateGraphletKernelCpp(list(), al.list, par, 0)
+}
+
+CalculateShortestPathKernel <- function(G) {
+  G.floyd <- as.list(rep(NA, length(G)))
+  for (i in 1:length(G)) {
+    D <- distances(G[[i]])
+    G.floyd[[i]] <- make_full_graph(vcount(G[[i]])) %>% set_edge_attr("weight", value = D[lower.tri(D)])
+  }
+  CalculateKStepRandomWalkKernel(G, c(0, 1))
+}
+
 GetGraphInfo <- function(g) {
   ## an edge matrix
   E <- as_edgelist(g)

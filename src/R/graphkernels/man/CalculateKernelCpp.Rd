@@ -17,7 +17,7 @@ CalculateKernelCpp(graph_info_list, par_r, kernel_type)
     parameters of kernels
   }
   \item{kernel_type}{
-    The type of kernel
+    type of kernel
   }
 }
 \value{

@@ -4,6 +4,10 @@
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppEigen)]]
 
+using Eigen::Map;
+using Eigen::SparseMatrix;
+using Eigen::LLT;
+
 typedef Eigen::Triplet<double> T;
 
 using namespace Rcpp;
@@ -73,7 +77,7 @@ void productAdjacency(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_label, vector<
 }
 // bucket sort used in Weisfeiler-Leiman graph kernel
 void bucketsort(vector<Int>& x, vector<Int>& index, Int label_max) {
-  vector<vector<Int> > buckets;
+  vector<vector<Int>> buckets;
   buckets.resize(label_max + 1);
 
   for (vector<Int>::iterator itr = index.begin(), end = index.end(); itr != end; ++itr) {
@@ -81,7 +85,7 @@ void bucketsort(vector<Int>& x, vector<Int>& index, Int label_max) {
   }
 
   Int counter = 0;
-  for (vector<vector<Int> >::iterator itr = buckets.begin(), end = buckets.end(); itr != end; ++itr) {
+  for (vector<vector<Int>>::iterator itr = buckets.begin(), end = buckets.end(); itr != end; ++itr) {
     for (vector<Int>::iterator itr2 = (*itr).begin(), end2 = (*itr).end(); itr2 != end2; ++itr2) {
       index[counter] = *itr2;
       counter++;
@@ -270,7 +274,7 @@ double kstepRandomWalkKernel(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_label, 
   return K;
 }
 // Weisfeiler-Leiman graph kernel
-void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int> >& V_label, vector<Int>& num_v, vector<Int>& num_e, vector<Int>& degree_max, Int h_max, NumericMatrix& K_mat) {
+void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<Int>& num_v, vector<Int>& num_e, vector<Int>& degree_max, Int h_max, NumericMatrix& K_mat) {
   // K_mat.setZero();
   Int n = (Int)E.size();
   Int v_all = accumulate(num_v.begin(), num_v.end(), 0);
@@ -471,4 +475,609 @@ NumericMatrix CalculateKernelCpp(List graph_info_list, NumericVector par_r, Int 
     }
   }
   return K;
+}
+
+// ========================================================= //
+// ==================== Graphlet kernel ==================== //
+// ========================================================= //
+// ===== graphlet kernel for k = 4 ===== //
+Int find_min(Int a, Int b, Int c) {
+  Int m;
+  Int mini = a;
+  if (b < mini) mini = b;
+  if (c < mini) mini = c;
+  if (mini == a) {
+    if (mini == b) {
+      if (mini == c) {
+	m = 7;
+      } else {
+	m = 4;
+      }
+    } else {
+      if (mini == c) {
+	m = 5;
+      } else {
+	m = 1;
+      }
+    }
+  } else {
+    if (mini == b) {
+      if (mini == c) {
+	m = 6;
+      } else {
+	m = 2;
+      }
+    } else {
+      m = 3;
+    }
+  }
+  return m;
+}
+void card_ThreeInter(vector<Int>& L1, vector<Int>& L2, vector<Int>& L3, vector<Int>& card) {
+  card.resize(7);
+  fill(card.begin(), card.end(), 0);
+  Int i = 0, j = 0, k = 0;
+
+  while (i < (Int)L1.size() && j < (Int)L2.size() && k < (Int)L3.size()) {
+    Int m = find_min(L1[i], L2[j], L3[k]);
+    card[m - 1] += 1;
+    switch(m) {
+    case 1:
+      i++; break;
+    case 2:
+      j++; break;
+    case 3:
+      k++; break;
+    case 4:
+      i++; j++; break;
+    case 5:
+      i++; k++; break;
+    case 6:
+      j++; k++; break;
+    case 7:
+      i++; j++; k++; break;
+    }
+  }
+
+  if (i < (Int)L1.size() || j < (Int)L2.size() || k < (Int)L3.size()) {
+    if (i >= (Int)L1.size() && j >= (Int)L2.size()) {
+      card[2] += (Int)L3.size() - k;
+      k = (Int)L3.size();
+    } else {
+      if (i >= (Int)L1.size() && k >= (Int)L3.size()) {
+	card[1] += (Int)L2.size() - j;
+	j = (Int)L2.size();
+      } else {
+	if (j >= (Int)L2.size() && k >= (Int)L3.size()) {
+	  card[0] += (Int)L1.size() - i;
+	  i = (Int)L1.size();
+	} else {
+	  if (i >= (Int)L1.size()) {
+	    while (j < (Int)L2.size() && k < (Int)L3.size()) {
+	      if (L2[j] < L3[k]) {
+		card[1]++;
+		j++;
+	      } else {
+		if (L2[j] > L3[k]) {
+		  card[2]++;
+		  k++;
+		} else {
+		  card[5]++;
+		  j++;
+		  k++;
+		}
+	      }
+	    }
+	  } else {
+	    if (j >= (Int)L2.size()) {
+	      while (i < (Int)L1.size() && k < (Int)L3.size()) {
+		if (L1[i] < L3[k]) {
+		  card[0]++;
+		  i++;
+		} else {
+		  if (L1[i] > L3[k]) {
+		    card[2]++;
+		    k++;
+		  } else {
+		    card[4]++;
+		    i++;
+		    k++;
+		  }
+		}
+	      }
+	    } else {
+	      if (k >= (Int)L3.size()) {
+		while (i < (Int)L1.size() && j < (Int)L2.size()) {
+		  if (L1[i] < L2[j]) {
+		    card[0]++;
+		    i++;
+		  } else {
+		    if (L1[i] > L2[j]) {
+		      card[1]++;
+		      j++;
+		    } else {
+		      card[3]++;
+		      i++;
+		      j++;
+		    }
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+  if (i < (Int)L1.size() || j < (Int)L2.size() || k < (Int)L3.size()) {
+    if (i >= (Int)L1.size() && j >= (Int)L2.size()) {
+      card[2] += (Int)L3.size() - k;
+    } else if (i >= (Int)L1.size() && k >= (Int)L3.size()) {
+      card[1] += (Int)L2.size() - j;
+    } else if (j >= (Int)L2.size() && k >= (Int)L3.size()) {
+      card[0] += (Int)L1.size() - i;
+    }
+  }
+}
+void getIndices(vector<Int>& o_set1, vector<Int>& o_set2, vector<Int>& inter, vector<Int>& diff1, vector<Int>& diff2) {
+  vector<Int> inter_(min(o_set1.size(), o_set2.size()), -1);
+  vector<Int> diff1_(max(o_set1.size(), o_set2.size()), -1);
+  vector<Int> diff2_(max(o_set1.size(), o_set2.size()), -1);
+
+  Int i = 0, j = 0;
+  while (i < (Int)o_set1.size() && j < (Int)o_set2.size()) {
+    if (o_set1[i] < o_set2[j]) {
+      diff1_[i] = o_set1[i];
+      i++;
+    } else if (o_set1[i] > o_set2[j]) {
+      diff2_[j] = o_set2[j];
+      j++;
+    } else {
+      inter_[i] = o_set1[i];
+      i++;
+      j++;
+    }
+  }
+
+  if (i < (Int)o_set1.size()) {
+    for (Int k = i; k < (Int)o_set1.size(); ++k) {
+      diff1_[k] = o_set1[k];
+    }
+  } else if (j < (Int)o_set2.size()) {
+    for (Int k = j; k < (Int)o_set2.size(); ++k) {
+      diff2_[k] = o_set2[k];
+    }
+  }
+
+  inter.clear();
+  for (auto&& x : inter_) {
+    if (x >= 0) inter.push_back(x);
+  }
+  diff1.clear();
+  for (auto&& x : diff1_) {
+    if (x >= 0) diff1.push_back(x);
+  }
+  diff2.clear();
+  for (auto&& x : diff2_) {
+    if (x >= 0) diff2.push_back(x);
+  }
+}
+template<typename V>
+void countGraphletsFour(vector<vector<Int>>& al, V&& count) {
+  double n = (double)al.size();
+  vector<double> w = {1.0/12.0, 1.0/10.0, 1.0/8.0, 1.0/6.0, 1.0/8.0, 1.0/6.0, 1.0/6.0, 1.0/4.0, 1.0/4.0, 1.0/2.0, 0};
+  vector<Int> inter, diff1, diff2, card;
+  vector<double> inter_count(11);
+  vector<Int> v;
+  vector<Int>::iterator it;
+
+  double m = 0.0;
+  for (auto&& vec : al) {
+    m += (double)vec.size();
+  }
+  m /= 2.0;
+
+  vector<Int> v1(al.size());
+  iota(v1.begin(), v1.end(), 0);
+  for (auto&& i : v1) {
+    for (auto&& j : al[i]) {
+      double K = 0.0;
+      fill(inter_count.begin(), inter_count.end(), 0.0);
+      getIndices(al[i], al[j], inter, diff1, diff2);
+      for (auto&& k : inter) {
+	card_ThreeInter(al[i], al[j], al[k], card);
+	inter_count[0] += 0.5 * (double)card[6];
+	inter_count[1] += 0.5 * (double)(card[3] - 1.0);
+	inter_count[1] += 0.5 * (double)(card[4] - 1.0);
+	inter_count[1] += 0.5 * (double)(card[5] - 1.0);
+	inter_count[2] += 0.5 * (double)card[0];
+	inter_count[2] += 0.5 * (double)card[1];
+	inter_count[2] += (double)card[2];
+	inter_count[6] += n - (double)accumulate(card.begin(), card.end(), 0);
+	K += 0.5 * (double)card[6] + 0.5 * (double)(card[4] - 1.0) + 0.5 * (double)(card[5] - 1.0) + card[2];
+      }
+      v.clear();
+      v.resize(diff1.size());
+      sort(diff1.begin(), diff1.end());
+      sort(al[i].begin(), al[i].end());
+      it = set_difference(diff1.begin(), diff1.end(), al[i].begin(), al[i].end(), v.begin());
+      v.resize(it - v.begin());
+      for (auto&& k : v) {
+	card_ThreeInter(al[i], al[j], al[k], card);
+	inter_count[1] += 0.5 * (double)card[6];
+	inter_count[2] += 0.5 * (double)card[3];
+	inter_count[2] += 0.5 * (double)card[4];
+	inter_count[4] += 0.5 * (double)(card[5] - 1.0);
+	inter_count[3] += 0.5 * (double)(card[0] - 2.0);
+	inter_count[5] += 0.5 * (double)card[1];
+	inter_count[5] += (double)card[2];
+	inter_count[7] += n - (double)accumulate(card.begin(), card.end(), 0);
+	K += 0.5 * (double)card[6] + 0.5 * (double)card[4] + 0.5 * (double)(card[5] - 1.0) + card[2];
+      }
+      v.clear();
+      v.resize(diff2.size());
+      sort(diff2.begin(), diff2.end());
+      it = set_difference(diff2.begin(), diff2.end(), v1.begin(), v1.end(), v.begin());
+      v.resize(it - v.begin());
+      for (auto&& k : v) {
+	card_ThreeInter(al[i], al[j], al[k], card);
+	inter_count[1] += 0.5 * (double)card[6];
+	inter_count[2] += 0.5 * (double)card[3];
+	inter_count[4] += 0.5 * (double)(card[4] - 1.0);
+	inter_count[2] += 0.5 * (double)card[5];
+	inter_count[5] += 0.5 * (double)card[0];
+	inter_count[3] += 0.5 * (double)(card[1] - 2.0);
+	inter_count[5] += (double)card[2];
+	inter_count[7] += n - (double)accumulate(card.begin(), card.end(), 0);
+	K += 0.5 * (double)card[6] + 0.5 * (double)(card[4] - 1.0) + 0.5 * (double)card[5] + card[2];
+      }
+      inter_count[8] += m + 1.0 - (double)v1.size() - (double)al[i].size() - K;
+      inter_count[9] += (n - (double)inter.size() - (double)diff1.size() - (double)diff2.size())
+	* (n - (double)inter.size() - (double)diff1.size() - (double)diff2.size() - 1.0) / 2
+	- (m + 1.0 - (double)v1.size() - (double)al[i].size() - K);
+
+      for (Int k = 0; k < (Int)count.size(); ++k) {
+	count(k) += inter_count[k] * w[k];
+      }
+    }
+  }
+
+  count(10) = n * (n - 1.0) * (n - 2.0) * (n - 3.0) / (4.0 * 3.0 * 2.0) - count.head(10).sum();
+}
+// ===== graphlet kernel for k = 3 ===== //
+void getCardinality(vector<Int>& o_set1, vector<Int>& o_set2, vector<double>& card) {
+  card.resize(3);
+  fill(card.begin(), card.end(), 0.0);
+  Int i = 0, j = 0;
+  while (i < (Int)o_set1.size() && j < (Int)o_set2.size()) {
+    if (o_set1[i] < o_set2[j]) {
+      card[0] += 1.0;
+      i++;
+    } else if (o_set1[i] > o_set2[j]) {
+      card[1] += 1.0;
+      j++;
+    } else {
+      i++;
+      j++;
+      card[2] += 1.0;
+    }
+  }
+  card[0] += (double)((Int)o_set1.size() - i);
+  card[1] += (double)((Int)o_set2.size() - j);
+}
+template<typename V>
+void countGraphletsThree(vector<vector<Int>>& al, V&& count) {
+  double n = (double)al.size();
+  vector<double> w = {1.0/6.0, 1.0/4.0, 1.0/2.0};
+  vector<double> card(3);
+
+  vector<Int> L1(al.size());
+  iota(L1.begin(), L1.end(), 0);
+  for (auto&& i : L1) {
+    for (auto&& j : al[i]) {
+      getCardinality(al[i], al[j], card);
+      count(0) += w[0] * card[2];
+      count(1) += w[1] * (card[0] + card[1] - 2.0);
+      count(2) += w[2] * (n - accumulate(card.begin(), card.end(), 0.0));
+    }
+  }
+  count(3) = n * (n - 1.0) * (n - 2.0) / 6.0 - (count(0) + count(1) + count(2));
+}
+// ===== connected graphlet kernel for k = 5 ===== //
+void getMinValue(SparseMatrix<Int>& am, vector<Int>& idx, vector<Int>& sums) {
+  sums.clear();
+  sums.resize(idx.size());
+  fill(sums.begin(), sums.end(), 0);
+  for (Int i = 0; i < (Int)idx.size(); ++i) {
+    Int k = idx[i];
+    for (SparseMatrix<Int>::InnerIterator it(am, k); it; ++it) {
+      if(find(idx.begin(), idx.end(), it.row()) != idx.end()) {
+	sums[i] += it.value();
+      }
+    }
+  }
+  sums.push_back(1);
+}
+template<typename V>
+void countConnectedGraphletsFive(SparseMatrix<Int>& am, vector<vector<Int>>& al, V&& count) {
+  vector<double> w = {1.0/120.0, 1.0/72.0, 1.0/48.0, 1.0/36.0, 1.0/28.0, 1.0/20.0, 1.0/14.0, 1.0/10.0, 1.0/12.0, 1.0/8.0, 1.0/8.0, 1.0/4.0, 1.0/2.0, 1.0/12.0, 1.0/12.0, 1.0/4.0, 1.0/4.0, 1.0/2.0, 0.0, 0.0, 0.0};
+  Int n = (Int)am.rows();
+  vector<Int> L1(n);
+  iota(L1.begin(), L1.end(), 0);
+  vector<Int> idx(5);
+  vector<Int> sums;
+
+  for (auto&& i : L1) {
+    for (auto&& j : al[i]) {
+      for (auto&& k : al[j]) {
+	if (k != i) {
+	  for (auto&& l : al[k]) {
+	    if (l != i && l != j) {
+	      for (auto&& m : al[l]) {
+		if (m != i && m != j && m != k) {
+		  Int aux = am.coeff(i, k) + am.coeff(i, l) + am.coeff(i, m) + am.coeff(j, l) + am.coeff(j, m) + am.coeff(k, m);
+		  if (aux == 6) {
+		    count[0] += w[0];
+		  } else if (aux == 5) {
+		    count[1] += w[1];
+		  } else if (aux == 4) {
+		    idx[0] = i; idx[1] = j; idx[2] = k; idx[3] = l; idx[4] = m;
+		    getMinValue(am, idx, sums);
+		    Int aux1 = *min_element(sums.begin(), sums.end());
+		    if (aux1 == 2) {
+		      count[3] += w[3];
+		    } else {
+		      count[2] += w[2];
+		    }
+		  } else if (aux == 3) {
+		    idx[0] = i; idx[1] = j; idx[2] = k; idx[3] = l; idx[4] = m;
+		    getMinValue(am, idx, sums);
+		    sort(sums.begin(), sums.end());
+		    if (sums[0] == 1) {
+		      count[8] += w[8];
+		    } else if (sums[1] == 3) {
+		      count[4] += w[4];
+		    } else if (sums[2]== 2) {
+		      count[13] += w[13];
+		    } else {
+		      count[5] += w[5];
+		    }
+		  } else if (aux == 2) {
+		    idx[0] = i; idx[1] = j; idx[2] = k; idx[3] = l; idx[4] = m;
+		    getMinValue(am, idx, sums);
+		    vector<Int> aux1;
+		    copy(sums.begin(), sums.end(), back_inserter(aux1));
+		    sort(aux1.begin(), aux1.end());
+		    if (aux1[0] == 1) {
+		      if (aux1[2] == 2) {
+			count[15] += w[15];
+		      } else {
+			count[9] += w[9];
+		      }
+		    } else {
+		      if (aux1[3] == 2) {
+			count[10] += w[10];
+		      } else {
+			vector<Int> ind;
+			for (Int ii = 0; ii < (Int)sums.size(); ++ii) {
+			  if (sums[ii] == 3) ind.push_back(ii);
+			}
+			// idx[0] = i; idx[1] = j; idx[2] = k; idx[3] = l; idx[4] = m;
+			if (am.coeff(idx[ind[0]], idx[ind[1]]) == 1) {
+			  count[6] += w[6];
+			} else {
+			  count[14] += w[14];
+			}
+		      }
+		    }
+		  } else if (aux == 1) {
+		    idx[0] = i; idx[1] = j; idx[2] = k; idx[3] = l; idx[4] = m;
+		    getMinValue(am, idx, sums);
+		    vector<Int> aux1;
+		    copy(sums.begin(), sums.end(), back_inserter(aux1));
+		    sort(aux1.begin(), aux1.end());
+		    if (aux1[0] == 2) {
+		      count[7] += w[7];
+		    } else if (aux1[1] == 1) {
+		      count[17] += w[17];
+		    } else {
+		      vector<Int> ind;
+		      for (Int ii = 0; ii < (Int)sums.size(); ++ii) {
+			if (sums[ii] == 3) ind.push_back(ii);
+		      }
+		      for (Int ii = 0; ii < (Int)sums.size(); ++ii) {
+			if (sums[ii] == 1) ind.push_back(ii);
+		      }
+		      if (am.coeff(idx[ind[0]], idx[ind[1]]) == 1) {
+			count[16] += w[16];
+		      } else {
+			count[11] += w[11];
+		      }
+		    }
+		  } else {
+		    count[12] += w[12];
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    // count graphlets of type 20
+    for (auto&& j : al[i]) {
+      for (auto&& k : al[j]) {
+	if (k != i && am.coeff(i, k) == 0) {
+	  for (auto&& l : al[k]) {
+	    if (l != i && l != j && am.coeff(i, l) == 0 && am.coeff(j, l) == 0) {
+	      for (auto&& m : al[k]) {
+		if (m != i && m != j && m != l && am.coeff(i, m) == 0 && am.coeff(j, m) == 0 && am.coeff(l, m) == 0) {
+		  count[19] += w[19];
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    // count graphlets of type 19 and 21
+    for (Int j = 0; j < (Int)al[i].size() - 3; ++j) {
+      for (Int k = j + 1; k < (Int)al[i].size() - 2; ++k) {
+	for (Int l = k + 1; l < (Int)al[i].size() - 1; ++l) {
+	  for (Int m = l + 1; m < (Int)al[i].size(); ++m) {
+	    Int aux = am.coeff(al[i][j], al[i][k]) + am.coeff(al[i][j], al[i][l])
+	      + am.coeff(al[i][j], al[i][m]) + am.coeff(al[i][k], al[i][l])
+	      + am.coeff(al[i][k], al[i][m]) + am.coeff(al[i][l], al[i][m]);
+	    if (aux == 1) {
+	      count[18]++;
+	    } else if (aux == 0) {
+	      count[20]++;
+	    }
+	  }
+	}
+      }
+    }
+  }
+}
+template<typename V>
+// ===== connected graphlet kernel for k = 4 ===== //
+void countConnectedGraphletsFour(SparseMatrix<Int>& am, vector<vector<Int>>& al, V&& count) {
+  vector<double> w = {1.0/24.0, 1.0/12.0, 1.0/4.0, 0.0, 1.0/8.0, 1.0/2.0};
+  Int n = (Int)am.rows();
+  vector<Int> L1(n);
+  iota(L1.begin(), L1.end(), 0);
+
+  for (auto&& i : L1) {
+    for (auto&& j : al[i]) {
+      for (auto&& k : al[j]) {
+	if (k != i) {
+	  for (auto&& l : al[k]) {
+	    if (l != i && l != j){
+	      Int aux = am.coeff(i, k) + am.coeff(i, l) + am.coeff(j, l);
+	      if (aux == 3) {
+		count[0] += w[0];
+	      } else if (aux == 2) {
+		count[1] += w[1];
+	      } else if (aux == 1) {
+		if (am.coeff(i, l) == 1) {
+		  count[4] += w[4];
+		} else {
+		  count[2] += w[2];
+		}
+	      } else {
+		count[5] += w[5];
+	      }
+	    }
+	  }
+	}
+      }
+    }
+
+    // count "stars"
+    for (Int j = 0; j < (Int)al[i].size() - 2; ++j) {
+      for (Int k = j + 1; k < (Int)al[i].size() - 1; ++k) {
+	for (Int l = k + 1; l < (Int)al[i].size(); ++l) {
+	  if (am.coeff(al[i][j], al[i][k]) == 0 && am.coeff(al[i][j], al[i][l]) == 0 && am.coeff(al[i][k], al[i][l]) == 0) {
+	    count[3]++;
+	  }
+	}
+      }
+    }
+  }
+}
+// ===== connected graphlet kernel for k = 3 ===== //
+template<typename V>
+void countConnectedGraphletsThree(SparseMatrix<Int>& am, vector<vector<Int>>& al, V&& count) {
+  vector<double> w = {1.0/2.0, 1.0/6.0};
+  Int n = (Int)am.rows();
+  vector<Int> L1(n);
+  iota(L1.begin(), L1.end(), 0);
+
+  for (auto&& i : L1) {
+    for (auto&& j : al[i]) {
+      for (auto&& k : al[j]) {
+	if (k != i) {
+	  if (am.coeff(i, k) == 1) {
+	    count[1] += w[1];
+	  } else {
+	    count[0] += w[0];
+	  }
+	}
+      }
+    }
+  }
+}
+// [[Rcpp::export]]
+NumericMatrix CalculateGraphletKernelCpp(vector<SparseMatrix<Int>>& graph_adj_all, vector<vector<vector<Int>>>& graph_adjlist_all, Int k, bool connected) {
+  // decrement one to start indices from zero
+  for (auto&& X : graph_adjlist_all)
+    for (auto&& vec : X)
+      for (auto&& x : vec) x--;
+
+  MatrixXd freq;
+  Int freq_size;
+  if (connected) {
+    switch (k) {
+    case 3: freq_size = 2; break;
+    case 4: freq_size = 6; break;
+    case 5: freq_size = 21; break;
+    }
+  } else {
+    switch (k) {
+    case 3: freq_size = 4; break;
+    case 4: freq_size = 11; break;
+    }
+  }
+  freq = MatrixXd::Zero(graph_adjlist_all.size(), freq_size);
+
+  vector<Int> idx_graph(graph_adjlist_all.size());
+  iota(idx_graph.begin(), idx_graph.end(), 0);
+  for (auto&& i : idx_graph) {
+    if (k == 3) {
+      if (connected) {
+	countConnectedGraphletsThree(graph_adj_all[i], graph_adjlist_all[i], freq.row(i));
+      } else {
+	countGraphletsThree(graph_adjlist_all[i], freq.row(i));
+      }
+    } else if (k == 4) {
+      if (connected) {
+	countConnectedGraphletsFour(graph_adj_all[i], graph_adjlist_all[i], freq.row(i));
+      } else {
+	countGraphletsFour(graph_adjlist_all[i], freq.row(i));
+      }
+    } else if (k == 5) {
+      if (connected) {
+	countConnectedGraphletsFive(graph_adj_all[i], graph_adjlist_all[i], freq.row(i));
+      }
+    }
+    if (freq.row(i).sum() != 0) {
+      freq.row(i) /= freq.row(i).sum();
+    }
+  }
+  MatrixXd K = freq * freq.transpose();
+  return wrap(K);
+}
+
+SEXP graphkernels_CalculateKernelCpp(SEXP graph_info_listSEXP, SEXP par_rSEXP, SEXP kernel_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type graph_info_list(graph_info_listSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type par_r(par_rSEXP);
+    Rcpp::traits::input_parameter< Int >::type kernel_type(kernel_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(CalculateKernelCpp(graph_info_list, par_r, kernel_type));
+    return rcpp_result_gen;
+END_RCPP
+}
+SEXP graphkernels_CalculateGraphletKernelCpp(SEXP graph_adj_allSEXP, SEXP graph_adjlist_allSEXP, SEXP kSEXP, SEXP connectedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< vector<SparseMatrix<Int>>& >::type graph_adj_all(graph_adj_allSEXP);
+    Rcpp::traits::input_parameter< vector<vector<vector<Int>>>& >::type graph_adjlist_all(graph_adjlist_allSEXP);
+    Rcpp::traits::input_parameter< Int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< bool >::type connected(connectedSEXP);
+    rcpp_result_gen = Rcpp::wrap(CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected));
+    return rcpp_result_gen;
+END_RCPP
 }

@@ -5,3 +5,7 @@ CalculateKernelCpp <- function(graph_info_list, par_r, kernel_type) {
     .Call('graphkernels_CalculateKernelCpp', PACKAGE = 'graphkernels', graph_info_list, par_r, kernel_type)
 }
 
+CalculateGraphletKernelCpp <- function(graph_adj_all, graph_adjlist_all, k, connected) {
+    .Call('graphkernels_CalculateGraphletKernelCpp', PACKAGE = 'graphkernels', graph_adj_all, graph_adjlist_all, k, connected)
+}
+

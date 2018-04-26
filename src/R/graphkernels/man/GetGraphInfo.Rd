@@ -5,7 +5,7 @@
 }
 \description{
   This function extracts necessary information of graphs for kernel
-  computation
+  computation.
 }
 \usage{
 GetGraphInfo(g)

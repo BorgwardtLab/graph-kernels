@@ -6,7 +6,12 @@
   Graph Kernels
 }
 \description{
-  A fast C++ implementation for computing various graph kernels including (1) simple kernels between vertex and/or edge label histograms, (2) random walk kernels (popular baselines), and (3) the Weisfeiler-Lehman graph kernel (state-of-the-art).
+  A fast C++ implementation for computing various graph kernels
+  including (1) simple kernels between vertex and/or edge label
+  histograms, (2) graphlet kernels, (3) random walk kernels (popular
+  baselines), and (4) the Weisfeiler-Lehman graph kernel
+  (state-of-the-art).
+  
 }
 \details{
   This library provides the following graph kernels:
@@ -19,9 +24,11 @@
     \item the Gaussian RBF kernel between vertex label histograms
     \item the Gaussian RBF kernel between edge label histograms
     \item the Gaussian RBF kernel between vertex-edge label histograms
+    \item the graphlet kernel
     \item the \eqn{k}{k}-step random walk kernel
     \item the geometric random walk kernel
     \item the exponential random walk kernel
+    \item the shortest-path kernel
     \item the Weisfeiler-Lehman subtree kernel
   }
   Given a list of \pkg{igraph} graphs, each function calculates the
@@ -33,6 +40,11 @@ Mahito Sugiyama
 Maintainer: Mahito Sugiyama \code{<mahito@nii.ac.jp>}
 }
 \references{
+  Borgwardt, K. M., Kriegel, H.-P.: \strong{Shortest-Path Kernels on
+    Graphs}, \emph{Proceedings of the 5th IEEE International Conference on
+    Data Mining (ICDM'05)}, 74-81 (2005)
+  \url{http://ieeexplore.ieee.org/document/1565664/}.
+
   Debnath, A. K., Lopez de Compadre, R. L., Debnath, G., Shusterman,
   A. J., Hansch, C.: \strong{Structure-activity relationship of
     mutagenic aromatic and heteroaromatic nitro compounds. correlation
@@ -50,6 +62,13 @@ Maintainer: Mahito Sugiyama \code{<mahito@nii.ac.jp>}
   \emph{Journal of Machine Learning Research}, 12, 2359-2561 (2011)
   \url{http://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
 
+  Shervashidze, N., Vishwanathan, S. V. N., Petri, T., Mehlhorn, K.,
+  Borgwardt, K. M.: \strong{Efficient Graphlet Kernels for Large Graph
+    Comparison}, \emph{Proceedings of the 12th International Conference
+    on Artificial Intelligence and Statistics (AISTATS)}, 5, 488-495
+  (2009)
+  \url{http://proceedings.mlr.press/v5/shervashidze09a.html}.
+
   Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk
     Kernels}, \emph{Advances in Neural Information Processing Systems
     (NIPS 2015)}, 28, 1630-1638 (2015)
@@ -60,6 +79,8 @@ Maintainer: Mahito Sugiyama \code{<mahito@nii.ac.jp>}
 data(mutag)
 KEH <- CalculateEdgeHistKernel(mutag)
   ## compute linear kernel between edge histograms
+KGL <- CalculateGraphletKernel(mutag, 4)
+  ## compute graphlet kernel
 KkR <- CalculateKStepRandomWalkKernel(mutag, c(.1, .1))
   ## compute k-step random walk kernel (k = 2 in this case)
 KWL <- CalculateWLKernel(mutag, 5)

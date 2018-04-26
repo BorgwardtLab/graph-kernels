@@ -3,15 +3,17 @@
 #include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
 
-/* FIXME:
+/* FIXME: 
    Check these declarations against the C/Fortran source code.
 */
 
 /* .Call calls */
+extern SEXP graphkernels_CalculateGraphletKernelCpp(SEXP, SEXP, SEXP, SEXP);
 extern SEXP graphkernels_CalculateKernelCpp(SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"graphkernels_CalculateKernelCpp", (DL_FUNC) &graphkernels_CalculateKernelCpp, 3},
+    {"graphkernels_CalculateGraphletKernelCpp", (DL_FUNC) &graphkernels_CalculateGraphletKernelCpp, 4},
+    {"graphkernels_CalculateKernelCpp",         (DL_FUNC) &graphkernels_CalculateKernelCpp,         3},
     {NULL, NULL, 0}
 };
 
