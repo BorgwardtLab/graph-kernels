@@ -121,6 +121,16 @@ CalculateShortestPathKernel <- function(G) {
 }
 
 GetGraphInfo <- function(g) {
+  ## change name of labels to "label"
+  names(vertex_attr(g))[1] <- "label"
+  ## remove non-integer labels
+  l <- as.integer(vertex_attr(g)$label)
+  if (sum(is.na(l)) > 0) {
+    warning("Non-integer labels are converted to 0.")
+    l[is.na(l)] <- 0
+  }
+  g <- g %>% set_vertex_attr("label", value = l)
+
   ## an edge matrix
   E <- as_edgelist(g)
   E <- matrix(as.integer(E), ncol = ncol(E))

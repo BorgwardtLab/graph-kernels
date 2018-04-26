@@ -27,4 +27,5 @@
 *.out
 *.app
 
-*.Rcheck/*
+*.Rcheck
+
