@@ -482,6 +482,8 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<int> >& V_label, vector<i
   vector<int> index_org(v_all);
   vector<int> graph_index(v_all);
 
+  label_list.setZero();
+
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < num_v[i]; j++) {
       label_list(j + raise, 0) = V_label[i][j];
@@ -525,7 +527,7 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<int> >& V_label, vector<i
 
     // first put vertex label
     nei_list.col(0) = label_list.col(h);
-    // second put neibor labels
+    // second put neighbor labels
     raise = 0;
     for (int i = 0; i < n; i++) {
       fill(counter.begin(), counter.end(), 1);
@@ -540,6 +542,17 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<int> >& V_label, vector<i
       raise += num_v[i];
     }
 
+    // sort each row w.r.t. neighbors
+    vector<int> y(nei_list.cols() - 1);
+    for (int i = 0; i < v_all; i++) {
+      for (int j = 1; j < nei_list.cols(); ++j) {
+	y[j - 1] = nei_list(i, j);
+      }
+      sort(y.begin(), y.end(), greater<int>());
+      for (int j = 1; j < nei_list.cols(); ++j) {
+	nei_list(i, j) = y[j - 1];
+      }
+    }
     // radix sort
     for (int i = 0; i < v_all; i++) {
       index[i] = i;
@@ -558,7 +571,7 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<int> >& V_label, vector<i
       count_index.insert(graph_index[index_org[index[i]]]);
       count[graph_index[index_org[index[i]]]]++;
       if (i == v_all - 1 ||
-	  (nei_list.row(index[i]) - nei_list.row(index[i + 1])).sum() != 0) {
+	  (nei_list.row(index[i]) - nei_list.row(index[i + 1])).array().abs().sum() != 0) {
 	for (set<int>::iterator itr = count_index.begin(), end = count_index.end(); itr != end; ++itr) {
 	  for (set<int>::iterator itr2 = itr, end2 = count_index.end(); itr2 != end2; ++itr2) {
 	    k_value = count[*itr] * count[*itr2];
