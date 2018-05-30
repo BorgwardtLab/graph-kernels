@@ -79,10 +79,6 @@ Maintainer: Mahito Sugiyama \code{<mahito@nii.ac.jp>}
 data(mutag)
 KEH <- CalculateEdgeHistKernel(mutag)
   ## compute linear kernel between edge histograms
-KGL <- CalculateGraphletKernel(mutag, 4)
-  ## compute graphlet kernel
-KkR <- CalculateKStepRandomWalkKernel(mutag, c(.1, .1))
-  ## compute k-step random walk kernel (k = 2 in this case)
 KWL <- CalculateWLKernel(mutag, 5)
   ## compute Weisfeiler-Lehman subtree kernel
 }
