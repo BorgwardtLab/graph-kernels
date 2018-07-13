@@ -7,7 +7,8 @@
   This function calculates a graphlet kernel matrix.
 }
 \usage{
-CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected)
+CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k,
+connected, store_features)
 }
 \arguments{
   \item{graph_adj_all}{
@@ -22,9 +23,28 @@ CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected)
   \item{connected}{
     whether or not graphlets are conneceted
   }
+  \item{store_features}{
+    feature vector representations of graphs are returned if TRUE
+  }
 }
 \value{
-  a kernel matrix of the respective graphlet kernel
+  \code{store_features} is \code{FALSE}
+  \itemize{
+    \item a kernel matrix of the respective graphlet kernel
+  }
+
+  \code{store_features} is \code{TRUE}
+  \itemize{
+    \item a named list with the following members:
+    \describe{
+      \item{\code{kernel}}{
+	a kernel matrix of the respective graphlet kernel
+      }
+      \item{\code{feature}}{
+	feature vector representations of graphs
+      }
+    }
+  }
 }
 \references{
   Shervashidze, N., Vishwanathan, S. V. N., Petri, T., Mehlhorn, K.,
@@ -41,7 +61,7 @@ CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected)
 data(mutag)
 al.list <- as.list(rep(NA, length(mutag)))
 for (i in 1:length(mutag)) { al.list[[i]] <- as_adj_list(mutag[[i]]) }
-K <- CalculateGraphletKernelCpp(list(), al.list, 4, 0)
+K <- CalculateGraphletKernelCpp(list(), al.list, 4, 0, FALSE)
 }
 \keyword{ graph kernel }
 \keyword{ graphlet }

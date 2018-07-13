@@ -8,7 +8,7 @@
   connected graphlets \eqn{K_{CGL}}{K_CGL} between unlabeled graphs.
 }
 \usage{
-CalculateConnectedGraphletKernel(G, par)
+CalculateConnectedGraphletKernel(G, par, store.features = FALSE)
 }
 \arguments{
   \item{G}{
@@ -17,9 +17,29 @@ CalculateConnectedGraphletKernel(G, par)
   \item{par}{
     the number \eqn{k}{k} of graphlet nodes (\eqn{k = 3}{k = 3}, 4, or 5 is supported)
   }
+  \item{store.features}{
+    feature vector representations of graphs are returned if TRUE
+  }
 }
 \value{
-  a kernel matrix of the connected graphlet kernel \eqn{K_{CGL}}{K_CGL}
+  \code{store.features} is \code{FALSE}
+  \itemize{
+    \item a kernel matrix of the connected graphlet kernel \eqn{K_{CGL}}{K_CGL}
+  }
+
+  \code{store.features} is \code{TRUE}
+  \itemize{
+    \item a named list with the following members:
+    \describe{
+      \item{\code{kernel}}{
+	a kernel matrix of the connected graphlet kernel
+	\eqn{K_{CGL}}{K_CGL}
+      }
+      \item{\code{feature}}{
+	feature vector representations of graphs
+      }
+    }
+  }
 }
 \references{
   Shervashidze, N., Vishwanathan, S. V. N., Petri, T., Mehlhorn, K.,

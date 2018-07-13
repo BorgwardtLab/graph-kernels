@@ -118,6 +118,35 @@ double edgeHistogramKernel(MatrixXi& e1, MatrixXi& e2, double sigma) {
 
   return selectLinearGaussian(h1, h2, sigma);
 }
+void edgeHistogramFeature(vector<MatrixXi>& E, MatrixXi& F, vector<Int>& labels) {
+  Int e_label_max = 0;
+  vector<Int> idx(E.size());
+  iota(idx.begin(), idx.end(), 0);
+
+  for (auto&& l : idx) {
+    for (Int i = 0; i < E[l].rows(); ++i) {
+      if (E[l](i, 2) > e_label_max) e_label_max = E[l](i, 2);
+    }
+  }
+
+  MatrixXi M = MatrixXi::Zero(E.size(), e_label_max + 1);
+  for (auto&& l : idx) {
+    for (Int i = 0; i < E[l].rows(); ++i) {
+      M(l, E[l](i, 2)) += 1;
+    }
+  }
+
+  VectorXi M_colsums = M.colwise().sum();
+  for (Int i = 0; i < M_colsums.size(); ++i) {
+    if (M_colsums[i] > 0) labels.push_back(i);
+  }
+
+  F = MatrixXi::Zero(E.size(), labels.size());
+  for (Int i = 0; i < (Int)labels.size(); ++i) {
+    F.col(i) = M.col(labels[i]);
+  }
+  for (auto&& l : labels) l += 1;
+}
 // vertex histogram karnel
 double vertexHistogramKernel(vector<Int>& v1_label, vector<Int>& v2_label, double sigma) {
   Int v1_label_max = *max_element(v1_label.begin(), v1_label.end());
@@ -135,6 +164,32 @@ double vertexHistogramKernel(vector<Int>& v1_label, vector<Int>& v2_label, doubl
   }
 
   return selectLinearGaussian(h1, h2, sigma);
+}
+void vertexHistogramFeature(vector<vector<Int>>& V_label, MatrixXi& F, vector<Int>& labels) {
+  Int v_label_max = 0;
+
+  for (auto&& v_label : V_label) {
+    Int tmp = *max_element(v_label.begin(), v_label.end());
+    if (tmp > v_label_max) v_label_max = tmp;
+  }
+
+  MatrixXi M = MatrixXi::Zero(V_label.size(), v_label_max + 1);
+
+  for (Int l = 0; l < (Int)V_label.size(); ++l) {
+    for (Int i = 0; i < (Int)V_label[l].size(); ++i) {
+      M(l, V_label[l][i]) += 1;
+    }
+  }
+
+  VectorXi M_colsums = M.colwise().sum();
+  for (Int i = 0; i < M_colsums.size(); ++i) {
+    if (M_colsums[i] > 0) labels.push_back(i);
+  }
+
+  F = MatrixXi::Zero(V_label.size(), labels.size());
+  for (Int i = 0; i < (Int)labels.size(); ++i) {
+    F.col(i) = M.col(labels[i]);
+  }
 }
 // vertex-edge histogram karnel
 double vertexEdgeHistogramKernel(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_label, vector<Int>& v2_label, double sigma) {
@@ -159,17 +214,72 @@ double vertexEdgeHistogramKernel(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_lab
   for (Int i = 0; i < e1.rows(); i++) {
     v1 = e1(i, 0);
     v2 = e1(i, 1);
-    if (v2 > v1) { Int v_tmp = v1; v1 = v2; v2 = v_tmp; }
+    // if (v2 > v1) { Int v_tmp = v1; v1 = v2; v2 = v_tmp; }
+    if (v1_label[v1] > v1_label[v2]) { Int v_tmp = v1; v1 = v2; v2 = v_tmp; }
     (h1[v1_label[v1] + v1_label[v2] * v_label_max + e1(i, 2) * v_label_max * v_label_max])++;
   }
   for (Int i = 0; i < e2.rows(); i++) {
     v1 = e2(i, 0);
     v2 = e2(i, 1);
-    if (v2 > v1) { Int v_tmp = v1; v1 = v2; v2 = v_tmp; }
+    // if (v2 > v1) { Int v_tmp = v1; v1 = v2; v2 = v_tmp; }
+    if (v2_label[v1] > v2_label[v2]) { Int v_tmp = v1; v1 = v2; v2 = v_tmp; }
     (h2[v2_label[v1] + v2_label[v2] * v_label_max + e2(i, 2) * v_label_max * v_label_max])++;
   }
 
   return selectLinearGaussian(h1, h2, sigma);
+}
+void vertexEdgeHistogramFeature(vector<MatrixXi>& E, vector<vector<Int>>& V_label, MatrixXi& F, vector<Int>& labels, vector<vector<Int>>& labels_hash) {
+  Int e_label_max = 0;
+  vector<Int> idx(E.size());
+  iota(idx.begin(), idx.end(), 0);
+  for (auto&& l : idx) {
+    for (Int i = 0; i < E[l].rows(); ++i) {
+      if (E[l](i, 2) > e_label_max) e_label_max = E[l](i, 2);
+    }
+  }
+  Int v_label_max = 0;
+  for (auto&& v_label : V_label) {
+    Int tmp = *max_element(v_label.begin(), v_label.end());
+    if (tmp > v_label_max) v_label_max = tmp;
+  }
+  v_label_max++;
+  e_label_max++;
+
+  MatrixXi M = MatrixXi::Zero(V_label.size(), v_label_max * v_label_max * e_label_max);
+
+  Int v1, v2;
+  for (Int l = 0; l < (Int)V_label.size(); ++l) {
+    for (Int i = 0; i < E[l].rows(); ++i) {
+      v1 = E[l](i, 0);
+      v2 = E[l](i, 1);
+      // if (v2 > v1) { Int v_tmp = v1; v1 = v2; v2 = v_tmp; }
+      if (V_label[l][v1] > V_label[l][v2]) { Int v_tmp = v1; v1 = v2; v2 = v_tmp; }
+      M(l, V_label[l][v1] + V_label[l][v2] * v_label_max + E[l](i, 2) * v_label_max * v_label_max) += 1;
+    }
+  }
+
+  VectorXi M_colsums = M.colwise().sum();
+  for (Int i = 0; i < M_colsums.size(); ++i) {
+    if (M_colsums[i] > 0) {
+      labels.push_back(i);
+      Int i3 = i / (v_label_max * v_label_max);
+      Int i12 = i % (v_label_max * v_label_max);
+      Int i2 = i12 / v_label_max;
+      Int i1 = i12 % v_label_max;
+      vector<Int> labels_tmp;
+      labels_tmp.push_back(i3 + 1);
+      labels_tmp.push_back(i1);
+      labels_tmp.push_back(i2);
+      labels_hash.push_back(labels_tmp);
+    }
+  }
+
+  F = MatrixXi::Zero(E.size(), labels.size());
+  for (Int i = 0; i < (Int)labels.size(); ++i) {
+    F.col(i) = M.col(labels[i]);
+  }
+
+  for (Int i = 0; i < (Int)labels.size(); ++i) labels[i] = i + 1;
 }
 // vertex-vertex-edge histogram karnel
 double vertexVertexEdgeHistogramKernel(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_label, vector<Int>& v2_label, double lambda) {
@@ -178,7 +288,7 @@ double vertexVertexEdgeHistogramKernel(MatrixXi& e1, MatrixXi& e2, vector<Int>& 
 // geometric random walk karnel
 double geometricRandomWalkKernel(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_label, vector<Int>& v2_label, double lambda) {
   // map each product (v_1, v_2) of vertics to a number H(v_1, v_2)
-  MatrixXi H(v1_label.size(), v2_label.size());  
+  MatrixXi H(v1_label.size(), v2_label.size());
   Int n_vx = productMapping(e1, e2, v1_label, v2_label, H);
 
   // prepare identity matrix
@@ -189,7 +299,7 @@ double geometricRandomWalkKernel(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_lab
   SparseMatrix<double> Ax(n_vx, n_vx);
   productAdjacency(e1, e2, v1_label, v2_label, H, Ax);
 
-  // inverse of I - lambda * Ax by fixed-poInt iterations
+  // inverse of I - lambda * Ax by fixed-point iterations
   VectorXd I_vec(n_vx);
   for (Int i  = 0; i < n_vx; i++) I_vec[i] = 1;
   VectorXd x = I_vec;
@@ -274,7 +384,7 @@ double kstepRandomWalkKernel(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_label, 
   return K;
 }
 // Weisfeiler-Leiman graph kernel
-void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<Int>& num_v, vector<Int>& num_e, vector<Int>& degree_max, Int h_max, NumericMatrix& K_mat) {
+void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<Int>& num_v, vector<Int>& num_e, vector<Int>& degree_max, Int h_max, NumericMatrix& K_mat, MatrixXi& F, vector<Int>& labels, vector<vector<Int>>& labels_hash, bool store_features) {
   // K_mat.setZero();
   Int n = (Int)E.size();
   Int v_all = accumulate(num_v.begin(), num_v.end(), 0);
@@ -293,6 +403,7 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<In
   vector<Int> index(v_all);
   vector<Int> index_org(v_all);
   vector<Int> graph_index(v_all);
+  VectorXi vec(E.size());
 
   label_list.setZero();
 
@@ -303,6 +414,8 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<In
     }
     raise += num_v[i];
   }
+
+  if (store_features) F = MatrixXi::Zero(E.size(), 0);
 
   // ===== Increment kernel values using the initial vertex labels =====
   // radix sort
@@ -320,7 +433,9 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<In
     count_index.insert(graph_index[index_org[index[i]]]);
     count[graph_index[index_org[index[i]]]]++;
     if (i == v_all - 1 || label_list(index[i], 0) != label_list(index[i + 1], 0)) {
+      if (store_features) vec.setZero();
       for (set<Int>::iterator itr = count_index.begin(), end = count_index.end(); itr != end; ++itr) {
+	if (store_features) vec(*itr) = count[*itr];
 	for (set<Int>::iterator itr2 = itr, end2 = count_index.end(); itr2 != end2; ++itr2) {
 	  k_value = count[*itr] * count[*itr2];
 	  K_mat(*itr, *itr2) += k_value;
@@ -329,6 +444,15 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<In
 	count[*itr] = 0;
       }
       count_index.clear();
+
+      if (store_features) {
+	F.conservativeResize(NoChange, F.cols() + 1);
+	F.col(F.cols() - 1) = vec;
+	labels.push_back(label_list(index[i], 0));
+	vector<Int> labels_tmp;
+	labels_tmp.push_back(label_list(index[i], 0));
+	labels_hash.push_back(labels_tmp);
+      }
     }
   }
 
@@ -342,6 +466,7 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<In
     raise = 0;
     for (Int i = 0; i < n; i++) {
       fill(counter.begin(), counter.end(), 1);
+
       for (Int j = 0; j < num_e[i]; j++) {
 	v_raised_1 = E[i](j, 0) + raise;
 	v_raised_2 = E[i](j, 1) + raise;
@@ -383,7 +508,12 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<In
       count[graph_index[index_org[index[i]]]]++;
       if (i == v_all - 1 ||
 	  (nei_list.row(index[i]) - nei_list.row(index[i + 1])).array().abs().sum() != 0) {
+
+	vec.setZero();
+
 	for (set<Int>::iterator itr = count_index.begin(), end = count_index.end(); itr != end; ++itr) {
+	  vec(*itr) = count[*itr];
+
 	  for (set<Int>::iterator itr2 = itr, end2 = count_index.end(); itr2 != end2; ++itr2) {
 	    k_value = count[*itr] * count[*itr2];
 	    K_mat(*itr, *itr2) += k_value;
@@ -391,7 +521,20 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<In
 	  }
 	  count[*itr] = 0;
 	}
-	count_index.clear();	
+	count_index.clear();
+
+	if (store_features) {
+	  F.conservativeResize(NoChange, F.cols() + 1);
+	  F.col(F.cols() - 1) = vec;
+	  labels.push_back(label_max);
+	  vector<Int> labels_tmp;
+	  for (Int j = 0; j < nei_list.row(index[i]).size(); ++j) {
+	    if (nei_list.row(index[i])[j] == 0) break;
+	    labels_tmp.push_back(nei_list.row(index[i])[j]);
+	  }
+	  labels_hash.push_back(labels_tmp);
+	}
+
 	label_max++;
       }
     }
@@ -441,6 +584,23 @@ double computeKernelValue(MatrixXi& e1, MatrixXi& e2, vector<Int>& v1_label, vec
   }
   return Kval;
 }
+// compute a kernel value of a pair of graphs
+void getFeatureVector(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<double>& par, Int kernel_type, MatrixXi& F, vector<Int>& labels, vector<vector<Int>>& labels_hash) {
+  switch (kernel_type) {
+  case 1: // edge histogram kernel
+    edgeHistogramFeature(E, F, labels);
+    break;
+  case 2: // vertex histogram kernel
+    vertexHistogramFeature(V_label, F, labels);
+    break;
+  case 3: // vertex-edge histogram kernel
+    vertexEdgeHistogramFeature(E, V_label, F, labels, labels_hash);
+    break;
+  default:
+    break;
+  }
+}
+
 
 // get information of graphs from an input R list
 void getGraphInfo(List& graph_info_list, vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<Int>& V_count, vector<Int>& E_count, vector<Int>& D_max) {
@@ -465,17 +625,21 @@ void getGraphInfo(List& graph_info_list, vector<MatrixXi>& E, vector<vector<Int>
   }
 }
 // [[Rcpp::export]]
-NumericMatrix CalculateKernelCpp(List graph_info_list, NumericVector par_r, Int kernel_type) {
+List CalculateKernelCpp(List graph_info_list, NumericVector par_r, Int kernel_type, bool store_features) {
   vector<MatrixXi> E;
   vector<vector<Int>> V_label;
   vector<Int> V_count;
   vector<Int> E_count;
   vector<Int> D_max;
+  NumericMatrix F; // for feature vector
+  MatrixXi Feigen; // for feature vector
+  vector<Int> labels; // for feature vector
+  vector<vector<Int>> labels_hash; // for feature vector
   NumericMatrix K(graph_info_list.size(), graph_info_list.size());
   getGraphInfo(graph_info_list, E, V_label, V_count, E_count, D_max);
   vector<double> par(par_r.begin(), par_r.end());
   if (kernel_type == 11) {
-    WLKernelMatrix(E, V_label, V_count, E_count, D_max, (Int)par[0], K);
+    WLKernelMatrix(E, V_label, V_count, E_count, D_max, (Int)par[0], K, Feigen, labels, labels_hash, store_features);
   } else {
     vector<Int> idx(graph_info_list.size());
     iota(idx.begin(), idx.end(), 0);
@@ -485,8 +649,19 @@ NumericMatrix CalculateKernelCpp(List graph_info_list, NumericVector par_r, Int 
 	K(j, i) = K(i, j);
       }
     }
+    if (store_features) {
+      getFeatureVector(E, V_label, par, kernel_type, Feigen, labels, labels_hash); // get feature vector
+    }
   }
-  return K;
+
+  if (store_features) {
+    F = wrap(Feigen);
+    colnames(F) = wrap(labels);
+  }
+
+  List L = List::create(Named("kernel") = K, Named("feature") = F, Named("hash") = wrap(labels_hash));
+
+  return L;
 }
 
 // ========================================================= //
@@ -1020,7 +1195,7 @@ void countConnectedGraphletsThree(SparseMatrix<Int>& am, vector<vector<Int>>& al
   }
 }
 // [[Rcpp::export]]
-NumericMatrix CalculateGraphletKernelCpp(vector<SparseMatrix<Int>>& graph_adj_all, vector<vector<vector<Int>>>& graph_adjlist_all, Int k, bool connected) {
+List CalculateGraphletKernelCpp(vector<SparseMatrix<Int>>& graph_adj_all, vector<vector<vector<Int>>>& graph_adjlist_all, Int k, bool connected, bool store_features) {
   // decrement one to start indices from zero
   for (auto&& X : graph_adjlist_all)
     for (auto&& vec : X)
@@ -1067,21 +1242,24 @@ NumericMatrix CalculateGraphletKernelCpp(vector<SparseMatrix<Int>>& graph_adj_al
     }
   }
   MatrixXd K = freq * freq.transpose();
-  return wrap(K);
+  List L = List::create(Named("kernel") = wrap(K), Named("feature") = wrap(freq));
+
+  return L;
 }
 
-SEXP graphkernels_CalculateKernelCpp(SEXP graph_info_listSEXP, SEXP par_rSEXP, SEXP kernel_typeSEXP) {
+SEXP graphkernels_CalculateKernelCpp(SEXP graph_info_listSEXP, SEXP par_rSEXP, SEXP kernel_typeSEXP, SEXP store_featuresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type graph_info_list(graph_info_listSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type par_r(par_rSEXP);
     Rcpp::traits::input_parameter< Int >::type kernel_type(kernel_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(CalculateKernelCpp(graph_info_list, par_r, kernel_type));
+    Rcpp::traits::input_parameter< bool >::type store_features(store_featuresSEXP);
+    rcpp_result_gen = Rcpp::wrap(CalculateKernelCpp(graph_info_list, par_r, kernel_type, store_features));
     return rcpp_result_gen;
 END_RCPP
 }
-SEXP graphkernels_CalculateGraphletKernelCpp(SEXP graph_adj_allSEXP, SEXP graph_adjlist_allSEXP, SEXP kSEXP, SEXP connectedSEXP) {
+SEXP graphkernels_CalculateGraphletKernelCpp(SEXP graph_adj_allSEXP, SEXP graph_adjlist_allSEXP, SEXP kSEXP, SEXP connectedSEXP, SEXP store_featuresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1089,7 +1267,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< vector<vector<vector<Int>>>& >::type graph_adjlist_all(graph_adjlist_allSEXP);
     Rcpp::traits::input_parameter< Int >::type k(kSEXP);
     Rcpp::traits::input_parameter< bool >::type connected(connectedSEXP);
-    rcpp_result_gen = Rcpp::wrap(CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected));
+    Rcpp::traits::input_parameter< bool >::type store_features(store_featuresSEXP);
+    rcpp_result_gen = Rcpp::wrap(CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected, store_features));
     return rcpp_result_gen;
 END_RCPP
 }

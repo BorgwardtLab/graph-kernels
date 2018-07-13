@@ -7,7 +7,7 @@
   This function calculates a kernel matrix.
 }
 \usage{
-CalculateKernelCpp(graph_info_list, par_r, kernel_type)
+CalculateKernelCpp(graph_info_list, par_r, kernel_type, store_features)
 }
 \arguments{
   \item{graph_info_list}{
@@ -19,9 +19,28 @@ CalculateKernelCpp(graph_info_list, par_r, kernel_type)
   \item{kernel_type}{
     type of kernel
   }
+  \item{store_features}{
+    feature vector representations of graphs are returned if TRUE
+  }
 }
 \value{
-  a kernel matrix of the respective kernel
+  \code{store_features} is \code{FALSE}
+  \itemize{
+    \item a kernel matrix of the respective kernel
+  }
+
+  \code{store_features} is \code{TRUE}
+  \itemize{
+    \item a named list with the following members:
+    \describe{
+      \item{\code{kernel}}{
+	a kernel matrix of the respective kernel
+      }
+      \item{\code{feature}}{
+	feature vector representations of graphs
+      }
+    }
+  }
 }
 \references{
   Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk
@@ -36,7 +55,7 @@ CalculateKernelCpp(graph_info_list, par_r, kernel_type)
 data(mutag)
 graph.info.list <- vector("list", length(mutag))
 for (i in 1:length(mutag)) { graph.info.list[[i]] <- GetGraphInfo(mutag[[i]]) }
-K <- CalculateKernelCpp(graph.info.list, 5, 11)
+K <- CalculateKernelCpp(graph.info.list, 5, 11, FALSE)
 }
 \keyword{ graph kernel }
 

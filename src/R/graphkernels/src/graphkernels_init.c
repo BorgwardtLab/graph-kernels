@@ -8,12 +8,12 @@
 */
 
 /* .Call calls */
-extern SEXP graphkernels_CalculateGraphletKernelCpp(SEXP, SEXP, SEXP, SEXP);
-extern SEXP graphkernels_CalculateKernelCpp(SEXP, SEXP, SEXP);
+extern SEXP graphkernels_CalculateGraphletKernelCpp(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP graphkernels_CalculateKernelCpp(SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"graphkernels_CalculateGraphletKernelCpp", (DL_FUNC) &graphkernels_CalculateGraphletKernelCpp, 4},
-    {"graphkernels_CalculateKernelCpp",         (DL_FUNC) &graphkernels_CalculateKernelCpp,         3},
+    {"graphkernels_CalculateGraphletKernelCpp", (DL_FUNC) &graphkernels_CalculateGraphletKernelCpp, 5},
+    {"graphkernels_CalculateKernelCpp",         (DL_FUNC) &graphkernels_CalculateKernelCpp,         4},
     {NULL, NULL, 0}
 };
 

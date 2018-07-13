@@ -1,81 +1,89 @@
-CalculateEdgeHistKernel <- function(G) {
+CalculateEdgeHistKernel <- function(G, store.features = FALSE) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, 0, 1)
+  res <- CalculateKernelCpp(graph.info.list, 0, 1, store.features)[1:2]
+  if (!store.features) res <- res$kernel
+  res
 }
 
-CalculateVertexHistKernel <- function(G) {
+CalculateVertexHistKernel <- function(G, store.features = FALSE) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, 0, 2)
+  res <- CalculateKernelCpp(graph.info.list, 0, 2, store.features)[1:2]
+  if (!store.features) res <- res$kernel
+  res
 }
 
-CalculateVertexEdgeHistKernel <- function(G) {
+CalculateVertexEdgeHistKernel <- function(G, store.features = FALSE) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, 0, 3)
+  res <- CalculateKernelCpp(graph.info.list, 0, 3, store.features)
+  if (!store.features) res <- res$kernel
+  res
 }
 
 CalculateVertexVertexEdgeHistKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 4)
+  CalculateKernelCpp(graph.info.list, par, 4, FALSE)
 }
 
 CalculateEdgeHistGaussKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 5)
+  CalculateKernelCpp(graph.info.list, par, 5, FALSE)
 }
 
 CalculateVertexHistGaussKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 6)
+  CalculateKernelCpp(graph.info.list, par, 6, FALSE)
 }
 
 CalculateVertexEdgeHistGaussKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 7)
+  CalculateKernelCpp(graph.info.list, par, 7, FALSE)
 }
 
 CalculateGeometricRandomWalkKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 8)
+  CalculateKernelCpp(graph.info.list, par, 8, FALSE)
 }
 
 CalculateExponentialRandomWalkKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 9)
+  CalculateKernelCpp(graph.info.list, par, 9, FALSE)
 }
 
 CalculateKStepRandomWalkKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 10)
+  CalculateKernelCpp(graph.info.list, par, 10, FALSE)
 }
 
-CalculateWLKernel <- function(G, par) {
+CalculateWLKernel <- function(G, par, store.features = FALSE) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 11)
+  res <- CalculateKernelCpp(graph.info.list, par, 11, store.features)
+  if (!store.features) res <- res$kernel
+  res
 }
 
-CalculateConnectedGraphletKernel <- function(G, par) {
+CalculateConnectedGraphletKernel <- function(G, par, store.features = FALSE) {
   if (par < 3) {
     par <- 3
     warning("k = 3 is used (k = 3, 4, or 5 is supported).")
@@ -92,10 +100,12 @@ CalculateConnectedGraphletKernel <- function(G, par) {
   for (i in 1:length(G)) {
     am.list[[i]] <- as_adj(G[[i]])
   }
-  CalculateGraphletKernelCpp(am.list, al.list, par, 1)
+  res <- CalculateGraphletKernelCpp(am.list, al.list, par, 1, store.features)
+  if (!store.features) res <- res$kernel
+  res
 }
 
-CalculateGraphletKernel <- function(G, par) {
+CalculateGraphletKernel <- function(G, par, store.features = FALSE) {
   if (par < 3) {
     par <- 3
     warning("k = 3 is used (k = 3 or 4 is supported).")
@@ -108,7 +118,9 @@ CalculateGraphletKernel <- function(G, par) {
   for (i in 1:length(G)) {
     al.list[[i]] <- as_adj_list(G[[i]])
   }
-  CalculateGraphletKernelCpp(list(), al.list, par, 0)
+  res <- CalculateGraphletKernelCpp(list(), al.list, par, 0, store.features)
+  if (!store.features) res <- res$kernel
+  res
 }
 
 CalculateShortestPathKernel <- function(G) {

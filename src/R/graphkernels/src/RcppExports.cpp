@@ -24,21 +24,22 @@ using namespace std;
 
 
 // CalculateKernelCpp
-NumericMatrix CalculateKernelCpp(List graph_info_list, NumericVector par_r, Int kernel_type);
-RcppExport SEXP graphkernels_CalculateKernelCpp(SEXP graph_info_listSEXP, SEXP par_rSEXP, SEXP kernel_typeSEXP) {
+NumericMatrix CalculateKernelCpp(List graph_info_list, NumericVector par_r, Int kernel_type, bool store_features);
+RcppExport SEXP graphkernels_CalculateKernelCpp(SEXP graph_info_listSEXP, SEXP par_rSEXP, SEXP kernel_typeSEXP, SEXP store_featuresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type graph_info_list(graph_info_listSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type par_r(par_rSEXP);
     Rcpp::traits::input_parameter< Int >::type kernel_type(kernel_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(CalculateKernelCpp(graph_info_list, par_r, kernel_type));
+    Rcpp::traits::input_parameter< bool >::type store_features(store_featuresSEXP);
+    rcpp_result_gen = Rcpp::wrap(CalculateKernelCpp(graph_info_list, par_r, kernel_type, store_features));
     return rcpp_result_gen;
 END_RCPP
 }
 // CalculateGraphletKernelCpp
-NumericMatrix CalculateGraphletKernelCpp(vector<SparseMatrix<Int>>& graph_adj_all, vector<vector<vector<Int>>>& graph_adjlist_all, Int k, bool connected);
-RcppExport SEXP graphkernels_CalculateGraphletKernelCpp(SEXP graph_adj_allSEXP, SEXP graph_adjlist_allSEXP, SEXP kSEXP, SEXP connectedSEXP) {
+NumericMatrix CalculateGraphletKernelCpp(vector<SparseMatrix<Int>>& graph_adj_all, vector<vector<vector<Int>>>& graph_adjlist_all, Int k, bool connected, bool store_features);
+RcppExport SEXP graphkernels_CalculateGraphletKernelCpp(SEXP graph_adj_allSEXP, SEXP graph_adjlist_allSEXP, SEXP kSEXP, SEXP connectedSEXP, SEXP store_featuresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -46,7 +47,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< vector<vector<vector<Int>>>& >::type graph_adjlist_all(graph_adjlist_allSEXP);
     Rcpp::traits::input_parameter< Int >::type k(kSEXP);
     Rcpp::traits::input_parameter< bool >::type connected(connectedSEXP);
-    rcpp_result_gen = Rcpp::wrap(CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected));
+    Rcpp::traits::input_parameter< bool >::type store_features(store_featuresSEXP);
+    rcpp_result_gen = Rcpp::wrap(CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected, store_features));
     return rcpp_result_gen;
 END_RCPP
 }

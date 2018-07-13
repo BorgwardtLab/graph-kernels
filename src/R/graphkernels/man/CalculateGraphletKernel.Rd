@@ -8,7 +8,7 @@
   \eqn{K_{GL}}{K_GL} between unlabeled graphs.
 }
 \usage{
-CalculateGraphletKernel(G, par)
+CalculateGraphletKernel(G, par, store.features = FALSE)
 }
 \arguments{
   \item{G}{
@@ -17,9 +17,28 @@ CalculateGraphletKernel(G, par)
   \item{par}{
     the number \eqn{k}{k} of graphlet nodes (\eqn{k = 3}{k = 3} or 4 is supported)
   }
+  \item{store.features}{
+    feature vector representations of graphs are returned if TRUE
+  }
 }
 \value{
-  a kernel matrix of the graphlet kernel \eqn{K_{GL}}{K_GL}
+  \code{store.features} is \code{FALSE}
+  \itemize{
+    \item a kernel matrix of the graphlet kernel \eqn{K_{GL}}{K_GL}
+  }
+
+  \code{store.features} is \code{TRUE}
+  \itemize{
+    \item a named list with the following members:
+    \describe{
+      \item{\code{kernel}}{
+	a kernel matrix of the graphlet kernel \eqn{K_{GL}}{K_GL}
+      }
+      \item{\code{feature}}{
+	feature vector representations of graphs
+      }
+    }
+  }
 }
 \references{
   Shervashidze, N., Vishwanathan, S. V. N., Petri, T., Mehlhorn, K.,
