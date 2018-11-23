@@ -503,39 +503,41 @@ void WLKernelMatrix(vector<MatrixXi>& E, vector<vector<Int>>& V_label, vector<In
     // re-labeling and increment kernel values
     label_max++;
     for (Int i = 0; i < v_all; i++) {
-      label_list(index_org[index[i]], h + 1) = label_max;
-      count_index.insert(graph_index[index_org[index[i]]]);
-      count[graph_index[index_org[index[i]]]]++;
-      if (i == v_all - 1 ||
-	  (nei_list.row(index[i]) - nei_list.row(index[i + 1])).array().abs().sum() != 0) {
+      if (num_e[graph_index[index_org[index[i]]]] > 0) {
+	label_list(index_org[index[i]], h + 1) = label_max;
+	count_index.insert(graph_index[index_org[index[i]]]);
+	count[graph_index[index_org[index[i]]]]++;
+	if (i == v_all - 1 ||
+	    (nei_list.row(index[i]) - nei_list.row(index[i + 1])).array().abs().sum() != 0) {
 
-	vec.setZero();
+	  vec.setZero();
 
-	for (set<Int>::iterator itr = count_index.begin(), end = count_index.end(); itr != end; ++itr) {
-	  vec(*itr) = count[*itr];
+	  for (set<Int>::iterator itr = count_index.begin(), end = count_index.end(); itr != end; ++itr) {
+	    vec(*itr) = count[*itr];
 
-	  for (set<Int>::iterator itr2 = itr, end2 = count_index.end(); itr2 != end2; ++itr2) {
-	    k_value = count[*itr] * count[*itr2];
-	    K_mat(*itr, *itr2) += k_value;
-	    K_mat(*itr2, *itr) += k_value;
+	    for (set<Int>::iterator itr2 = itr, end2 = count_index.end(); itr2 != end2; ++itr2) {
+	      k_value = count[*itr] * count[*itr2];
+	      K_mat(*itr, *itr2) += k_value;
+	      K_mat(*itr2, *itr) += k_value;
+	    }
+	    count[*itr] = 0;
 	  }
-	  count[*itr] = 0;
-	}
-	count_index.clear();
+	  count_index.clear();
 
-	if (store_features) {
-	  F.conservativeResize(NoChange, F.cols() + 1);
-	  F.col(F.cols() - 1) = vec;
-	  labels.push_back(label_max);
-	  vector<Int> labels_tmp;
-	  for (Int j = 0; j < nei_list.row(index[i]).size(); ++j) {
-	    if (nei_list.row(index[i])[j] == 0) break;
-	    labels_tmp.push_back(nei_list.row(index[i])[j]);
+	  if (store_features) {
+	    F.conservativeResize(NoChange, F.cols() + 1);
+	    F.col(F.cols() - 1) = vec;
+	    labels.push_back(label_max);
+	    vector<Int> labels_tmp;
+	    for (Int j = 0; j < nei_list.row(index[i]).size(); ++j) {
+	      if (nei_list.row(index[i])[j] == 0) break;
+	      labels_tmp.push_back(nei_list.row(index[i])[j]);
+	    }
+	    labels_hash.push_back(labels_tmp);
 	  }
-	  labels_hash.push_back(labels_tmp);
-	}
 
-	label_max++;
+	  label_max++;
+	}
       }
     }
   }
@@ -631,7 +633,8 @@ List CalculateKernelCpp(List graph_info_list, NumericVector par_r, Int kernel_ty
   vector<Int> V_count;
   vector<Int> E_count;
   vector<Int> D_max;
-  NumericMatrix F; // for feature vector
+  // NumericMatrix F; // for feature vector
+  IntegerMatrix F; // for feature vector
   MatrixXi Feigen; // for feature vector
   vector<Int> labels; // for feature vector
   vector<vector<Int>> labels_hash; // for feature vector

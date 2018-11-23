@@ -20,7 +20,7 @@ CalculateVertexEdgeHistKernel <- function(G, store.features = FALSE) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  res <- CalculateKernelCpp(graph.info.list, 0, 3, store.features)
+  res <- CalculateKernelCpp(graph.info.list, 0, 3, store.features)[1:2]
   if (!store.features) res <- res$kernel
   res
 }
@@ -29,49 +29,49 @@ CalculateVertexVertexEdgeHistKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 4, FALSE)
+  CalculateKernelCpp(graph.info.list, par, 4, FALSE)$kernel
 }
 
 CalculateEdgeHistGaussKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 5, FALSE)
+  CalculateKernelCpp(graph.info.list, par, 5, FALSE)$kernel
 }
 
 CalculateVertexHistGaussKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 6, FALSE)
+  CalculateKernelCpp(graph.info.list, par, 6, FALSE)$kernel
 }
 
 CalculateVertexEdgeHistGaussKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 7, FALSE)
+  CalculateKernelCpp(graph.info.list, par, 7, FALSE)$kernel
 }
 
 CalculateGeometricRandomWalkKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 8, FALSE)
+  CalculateKernelCpp(graph.info.list, par, 8, FALSE)$kernel
 }
 
 CalculateExponentialRandomWalkKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 9, FALSE)
+  CalculateKernelCpp(graph.info.list, par, 9, FALSE)$kernel
 }
 
 CalculateKStepRandomWalkKernel <- function(G, par) {
   graph.info.list <- vector("list", length(G))
   for (i in 1:length(G))
     graph.info.list[[i]] <- GetGraphInfo(G[[i]])
-  CalculateKernelCpp(graph.info.list, par, 10, FALSE)
+  CalculateKernelCpp(graph.info.list, par, 10, FALSE)$kernel
 }
 
 CalculateWLKernel <- function(G, par, store.features = FALSE) {
@@ -133,6 +133,14 @@ CalculateShortestPathKernel <- function(G) {
 }
 
 GetGraphInfo <- function(g) {
+  ## a vertex attribute is missing
+  if (length(vertex_attr(g)) == 0)
+      g <- set_vertex_attr(g, "label", value = rep(1, vcount(g)))
+  ## there are multiple vertex attributes
+  if (length(vertex_attr(g)) > 1) {
+    warning(paste0("There are multiple vertex attributes! The first attribute \"",
+                   names(vertex_attr(g))[1],  "\" is used."))
+  }
   ## change name of labels to "label"
   names(vertex_attr(g))[1] <- "label"
   ## remove non-integer labels
@@ -154,16 +162,10 @@ GetGraphInfo <- function(g) {
   ## an edge attribute is missing
   if (length(edge_attr(g)) == 0)
     g <- set_edge_attr(g, "label", value = rep(1, ecount(g)))
-  E <- cbind(E, edge_attr(g)[[1]])
+  if (length(E(g)) > 0)
+    E <- cbind(E, edge_attr(g)[[1]])
 
   ## a vector of a vertex attribute
-  ## there are multiple vertex attributes
-  if (length(vertex_attr(g)) > 1) {
-    warning(paste0("There are multiple vertex attributes! The first attribute \"",
-                   names(vertex_attr(g))[1],  "\" is used."))
-  }
-  if (length(vertex_attr(g)) == 0)
-    g <- set_vertex_attr(g, "label", value = rep(1, vcount(g)))
   v.label <- as.integer(vertex_attr(g)[[1]])
   res <- list(edge = E, vlabel = v.label,
               vsize = vcount(g), esize = ecount(g), maxdegree = max(degree(g)))
