@@ -90,7 +90,11 @@ Exponential random walk kernel                     |      ER | &#946;
 k-step random walk kernel                          |      kR | &#955;0, &#955;1, ..., &#955;k
 Weisfeiler-Lehman subtree kernel                   |      WL | h
 
+## Acknowledgements
+The development of the graphkernels open access software package was financially supported by the Horizon 2020/CDS-QUAMRI/634541 project.
+This support is gratefully acknowledged.
+
 ## Contact
 Author: Mahito Sugiyama  
-Affiliation: ISIR, Osaka University, Japan  
-E-mail: mahito@ar.sanken.osaka-u.ac.jp
+Affiliation: National Institute of Informatics, Japan  
+E-mail: mahito@nii.ac.jp
