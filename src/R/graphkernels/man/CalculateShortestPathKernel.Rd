@@ -22,7 +22,7 @@ CalculateShortestPathKernel(G)
   Borgwardt, K. M., Kriegel, H.-P.: \strong{Shortest-Path Kernels on
     Graphs}, \emph{Proceedings of the 5th IEEE International Conference on
     Data Mining (ICDM'05)}, 74-81 (2005)
-  \url{http://ieeexplore.ieee.org/document/1565664/}.
+  \url{https://ieeexplore.ieee.org/document/1565664/}.
 }
 \author{
   Mahito Sugiyama

@@ -16,7 +16,7 @@ data(mutag)
     mutagenic aromatic and heteroaromatic nitro compounds. correlation
     with molecular orbital energies and hydrophobicity}, \emph{Journal
     of Medicinal Chemistry}, 34(2), 786-797 (1991)
-  \url{http://pubs.acs.org/doi/abs/10.1021/jm00106a046}.
+  \url{https://pubs.acs.org/doi/abs/10.1021/jm00106a046}.
 }
 \author{
   Mahito Sugiyama

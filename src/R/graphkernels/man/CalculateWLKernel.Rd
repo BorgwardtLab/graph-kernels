@@ -25,7 +25,7 @@ CalculateWLKernel(G, par)
   Shervashidze, N., Schweitzer, P., van Leeuwen, E. J., Mehlhorn, K.,
   Borgwardt, K. M.: \strong{Weisfeiler-Lehman Graph Kernels},
   \emph{Journal of Machine Learning Research}, 12, 2359-2561 (2011)
-  \url{http://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
+  \url{https://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
 }
 \author{
   Mahito Sugiyama

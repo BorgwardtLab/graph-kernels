@@ -43,14 +43,14 @@ Maintainer: Mahito Sugiyama \code{<mahito@nii.ac.jp>}
   Borgwardt, K. M., Kriegel, H.-P.: \strong{Shortest-Path Kernels on
     Graphs}, \emph{Proceedings of the 5th IEEE International Conference on
     Data Mining (ICDM'05)}, 74-81 (2005)
-  \url{http://ieeexplore.ieee.org/document/1565664/}.
+  \url{https://ieeexplore.ieee.org/document/1565664/}.
 
   Debnath, A. K., Lopez de Compadre, R. L., Debnath, G., Shusterman,
   A. J., Hansch, C.: \strong{Structure-activity relationship of
     mutagenic aromatic and heteroaromatic nitro compounds. correlation
     with molecular orbital energies and hydrophobicity}, \emph{Journal
     of Medicinal Chemistry}, 34(2), 786-797 (1991)
-  \url{http://pubs.acs.org/doi/abs/10.1021/jm00106a046}.
+  \url{https://pubs.acs.org/doi/abs/10.1021/jm00106a046}.
 
   Gartner, T., Flach, P., Wrobel, S.: \strong{On graph kernels:
     Hardness results and efficient alternatives}, \emph{Learning Theory
@@ -60,14 +60,14 @@ Maintainer: Mahito Sugiyama \code{<mahito@nii.ac.jp>}
   Shervashidze, N., Schweitzer, P., van Leeuwen, E. J., Mehlhorn, K.,
   Borgwardt, K. M.: \strong{Weisfeiler-Lehman Graph Kernels},
   \emph{Journal of Machine Learning Research}, 12, 2359-2561 (2011)
-  \url{http://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
+  \url{https://www.jmlr.org/papers/volume12/shervashidze11a/shervashidze11a.pdf}.
 
   Shervashidze, N., Vishwanathan, S. V. N., Petri, T., Mehlhorn, K.,
   Borgwardt, K. M.: \strong{Efficient Graphlet Kernels for Large Graph
     Comparison}, \emph{Proceedings of the 12th International Conference
     on Artificial Intelligence and Statistics (AISTATS)}, 5, 488-495
   (2009)
-  \url{http://proceedings.mlr.press/v5/shervashidze09a.html}.
+  \url{https://proceedings.mlr.press/v5/shervashidze09a.html}.
 
   Sugiyama, M., Borgwardt, K. M.: \strong{Halting in Random Walk
     Kernels}, \emph{Advances in Neural Information Processing Systems

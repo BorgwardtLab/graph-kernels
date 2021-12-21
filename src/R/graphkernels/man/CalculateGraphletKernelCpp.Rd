@@ -32,7 +32,7 @@ CalculateGraphletKernelCpp(graph_adj_all, graph_adjlist_all, k, connected)
     Comparison}, \emph{Proceedings of the 12th International Conference
     on Artificial Intelligence and Statistics (AISTATS)}, 5, 488-495
   (2009)
-  \url{http://proceedings.mlr.press/v5/shervashidze09a.html}.
+  \url{https://proceedings.mlr.press/v5/shervashidze09a.html}.
 }
 \author{
   Mahito Sugiyama
